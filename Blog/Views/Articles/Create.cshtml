@@ -1,0 +1,31 @@
+﻿
+<div class="text-center">
+    <form asp-controller="Articles" asp-action="Create">
+        <input type="text"
+               name="Headline"
+               class="form-control"
+               placeholder="Headline"
+               aria-label="Headline"
+               aria-describedby="basic-addon1" />
+        <textarea name="ShortDescription"
+                  class="form-control"
+                  placeholder="Short description">
+        </textarea>
+        <textarea name="Text"
+                  class="form-control"
+                  placeholder="Main text">
+        </textarea>
+        <input type="text"
+               name="PictureLink"
+               class="form-control"
+               placeholder="PictureLink"
+               aria-label="PictureLink"
+               aria-describedby="basic-addon1" />
+        <input type="text"
+               name="StringTags"
+               class="form-control"
+               placeholder="Тэги(добавлять через пробел)"
+               aria-describedby="basic-addon1" />
+        <button type="submit" class="btn btn-primary">Опубликовать статью</button>
+    </form>
+</div>
