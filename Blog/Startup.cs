@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Policy;
 using System.Threading.Tasks;
+using Blog.Controllers;
 using Blog.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -45,6 +46,10 @@ namespace Blog
             app.UseRouting();
             app.UseMvc(routes => 
             {
+                routes.MapRoute(
+                    name: "pagination",
+                    template: "Articles/Page{PageId}",
+                    defaults: new { Controller = "Articles", Action = "List" });
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Authorization}");

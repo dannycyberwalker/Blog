@@ -16,13 +16,14 @@ namespace Blog.Controllers
     {
         private ApplicationDbContext context;
         private IConfiguration Configuration;
+        public int PageSize = 4;
         public ArticlesController(ApplicationDbContext context, IConfiguration configuration)
         {
             this.context = context;
             Configuration = configuration;
         }
         [HttpGet]
-        public IActionResult List()
+        public IActionResult List(int PageId = 1)
         {
             if (Configuration["User"] == null)
                 return RedirectToAction("Authorization", "Home");
@@ -35,7 +36,18 @@ namespace Blog.Controllers
                     CountComments = context.Comments.Where(c => c.ArticleId == i.Id).Count()
                 });
             }
-            return View(models);
+            return View(new ArticleListViewModel 
+            {
+                ListViewModels = models.OrderBy(a => a.Article.Id)
+                .Skip((PageId - 1) * PageSize)
+                .Take(PageSize).ToList(), 
+                PagingInfo = new PagingInfo 
+                {
+                    CurrentPage = PageId, 
+                    ItemsPerPage = PageSize, 
+                    TotalItems = models.Count()
+                }
+            });
         }
         
         [HttpGet]
