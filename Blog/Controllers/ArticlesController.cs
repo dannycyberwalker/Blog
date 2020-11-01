@@ -60,22 +60,23 @@ namespace Blog.Controllers
 
         [HttpPost]
         public IActionResult Create(Article article, string StringTags)
-        { 
-            if(StringTags != null)
+        {
+            if (ModelState.IsValid)
             {
-                article.Tags = new List<Tag>();
-                foreach (string TagName in StringTags.Split(' '))
+                if (StringTags != null)
                 {
-                    article.Tags.Add(new Tag { Name = TagName });
+                    article.Tags = new List<Tag>();
+                    foreach (string TagName in StringTags.Split(' '))
+                    {
+                        article.Tags.Add(new Tag { Name = TagName });
+                    }
                 }
+                article.UserId = JsonSerializer.Deserialize<User>(Configuration["User"]).Id;
+                context.Articles.Add(article);
+                context.SaveChanges();
             }
-            article.UserId = JsonSerializer.Deserialize<User>(Configuration["User"]).Id;
-            context.Articles.Add(article);
-            context.SaveChanges();
             return View();
         }
-
-
         [HttpGet]
         public IActionResult Show(int ArticleId)
         {
