@@ -10,5 +10,6 @@ namespace Blog.Models.ViewModels
         public int CountComments { get; set; }
 
         public Article Article { get; set; }
+        public string Author { get; set; }
     }
 }

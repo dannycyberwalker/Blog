@@ -39,5 +39,20 @@ namespace Blog.Controllers
         {
             return View();
         }
+        [HttpGet]
+        public IActionResult Authentication()
+        {
+            return View();
+        }
+        public IActionResult Authentication(User user)
+        {
+            if (ModelState.IsValid)
+            {
+                context.Users.Add(user);
+                context.SaveChanges();
+                return View("Authorization");
+            }
+            return View(user);
+        }
     }
 }

@@ -28,12 +28,13 @@ namespace Blog.Controllers
             if (Configuration["User"] == null)
                 return RedirectToAction("Authorization", "Home");
             List<ListViewModel> models = new List<ListViewModel>();
-            foreach(var i in context.Articles)
+            foreach(var article in context.Articles)
             {
                 models.Add(new ListViewModel
                 {
-                    Article = i,
-                    CountComments = context.Comments.Where(c => c.ArticleId == i.Id).Count()
+                    Article = article,
+                    CountComments = context.Comments.Where(c => c.ArticleId == article.Id).Count(),
+                    Author = context.Users.FirstOrDefault(n => n.Id == article.UserId).NickName
                 });
             }
             return View(new ArticleListViewModel 
