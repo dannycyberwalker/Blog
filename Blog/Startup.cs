@@ -1,13 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Policy;
-using System.Threading.Tasks;
-using Blog.Controllers;
 using Blog.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,16 +16,16 @@ namespace Blog
         {
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
-                .AddInMemoryCollection(new Dictionary<string, string>
-                {
-                    {"User", null}
-                });
-            // создаем конфигурацию
+                .AddInMemoryCollection(new Dictionary<string, string>{{"User", null}});
+
             Configuration = builder.Build();
         }
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(option => option.EnableEndpointRouting = false);
+            services.AddMvc(option => 
+            {
+                option.EnableEndpointRouting = false;
+            });
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
         }

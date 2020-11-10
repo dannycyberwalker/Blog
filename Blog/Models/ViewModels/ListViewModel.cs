@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Blog.Models.ViewModels
+﻿namespace Blog.Models.ViewModels
 {
     public class ListViewModel
     {
         public int CountComments { get; set; }
 
         public Article Article { get; set; }
-        public string Author { get; set; }
+        public string AuthorName { get; set; }
+        public int AuthorId { get; set; }
+        public int UserId { get; set; }
     }
 }

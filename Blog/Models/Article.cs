@@ -11,7 +11,7 @@ namespace Blog.Models
         public int Id { get; set; }
         [Display(Name = "Заголовок")]
         [Required(ErrorMessage = "Не коректная информация")]
-        [StringLength(50, MinimumLength = 3, ErrorMessage = "Длина строки должна быть от 3 до 50 символов")]
+        [StringLength(150, MinimumLength = 3, ErrorMessage = "Длина строки должна быть от 3 до 150 символов")]
         public string Headline { get; set; }
 
         [Display(Name = "Основной текст")]

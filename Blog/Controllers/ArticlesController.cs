@@ -1,14 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Text.Json;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Blog.Models;
 using Microsoft.Extensions.Configuration;
 using Blog.Models.ViewModels;
-using System.Runtime.InteropServices;
 
 namespace Blog.Controllers
 {
@@ -34,7 +30,9 @@ namespace Blog.Controllers
                 {
                     Article = article,
                     CountComments = context.Comments.Where(c => c.ArticleId == article.Id).Count(),
-                    Author = context.Users.FirstOrDefault(n => n.Id == article.UserId).NickName
+                    AuthorName = context.Users.FirstOrDefault(n => n.Id == article.UserId).NickName,
+                    AuthorId = article.UserId,
+                    UserId = JsonSerializer.Deserialize<User>(Configuration["User"]).Id
                 });
             }
             return View(new ArticleListViewModel 
@@ -50,6 +48,7 @@ namespace Blog.Controllers
                 }
             });
         }
+
         
         [HttpGet]
         public IActionResult Create()
@@ -78,6 +77,7 @@ namespace Blog.Controllers
             }
             return View();
         }
+
         [HttpGet]
         public IActionResult Show(int ArticleId)
         {
@@ -104,6 +104,24 @@ namespace Blog.Controllers
                 Comments = context.Comments.Where(c => c.ArticleId == ArticleId).ToList(),
                 Tags = context.Tags.Where(t => t.ArticleId == ArticleId).ToList()
             });
+        }
+
+        [HttpGet]
+        public IActionResult Edit(int ArticleId) =>
+           View(context.Articles.Where(a => a.Id == ArticleId).FirstOrDefault());
+
+        [HttpPost]
+        public IActionResult Edit(Article ArticleEdited)
+        {
+           Article ArticleFromDb = context.Articles
+                .Where(a => a.Id == ArticleEdited.Id)
+                .FirstOrDefault();
+            ArticleFromDb.Headline = ArticleEdited.Headline;
+            ArticleFromDb.PictureLink = ArticleEdited.PictureLink;
+            ArticleFromDb.ShortDescription = ArticleEdited.ShortDescription;
+            ArticleFromDb.Text = ArticleEdited.Text;
+            context.SaveChanges();
+            return RedirectToAction("Show", "Articles", new { ArticleId = ArticleEdited.Id }); ;
         }
     }
 }
