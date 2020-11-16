@@ -16,16 +16,14 @@ namespace Blog
         {
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
+                //Configuration for authorization
                 .AddInMemoryCollection(new Dictionary<string, string>{{"User", null}});
 
             Configuration = builder.Build();
         }
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(option => 
-            {
-                option.EnableEndpointRouting = false;
-            });
+            services.AddMvc(option => option.EnableEndpointRouting = false);
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
         }
