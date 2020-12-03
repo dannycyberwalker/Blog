@@ -21,7 +21,9 @@ namespace Blog.Models
         [Required(ErrorMessage = "Не коректная информация")]
         [StringLength(150, MinimumLength = 5, ErrorMessage = "Длина строки должна быть от 5 до 70 символов")]
         public string ShortDescription { get; set; }
+
         public User Author { get; set; }
+        public string UserId { get; set; }
 
         public List<Tag> Tags { get; set; }
         public List<Comment> Comments { get; set; }
@@ -32,7 +34,6 @@ namespace Blog.Models
         [Url(ErrorMessage = "Не корректная ссылка")]
         public string PictureLink { get; set; }   
 
-        public int UserId { get; set; }
         public Article()
         {
             CreateTime = DateTime.UtcNow;

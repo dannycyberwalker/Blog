@@ -6,7 +6,7 @@
 
         public Article Article { get; set; }
         public string AuthorName { get; set; }
-        public int AuthorId { get; set; }
-        public int UserId { get; set; }
+        public string AuthorId { get; set; }
+        public string UserId { get; set; }
     }
 }

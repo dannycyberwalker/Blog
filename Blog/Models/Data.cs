@@ -15,8 +15,6 @@ namespace Blog.Models
                         FirstName = "John",
                         LastName = "Smith",
                         Email = "JS1990@gmail.com",
-                        Phone = "+16313254",
-                        Password = "qwerty1234",
                         Articles = new List<Article>
                         {
                             new Article

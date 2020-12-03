@@ -5,6 +5,7 @@ using System.Linq;
 using Blog.Models;
 using Microsoft.Extensions.Configuration;
 using Blog.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Blog.Controllers
 {
@@ -21,8 +22,6 @@ namespace Blog.Controllers
         [HttpGet]
         public IActionResult List(int PageId = 1)
         {
-            if (Configuration["User"] == null)
-                return RedirectToAction("Authorization", "Home");
             List<ListViewModel> models = new List<ListViewModel>();
             foreach(var article in context.Articles)
             {
@@ -31,8 +30,7 @@ namespace Blog.Controllers
                     Article = article,
                     CountComments = context.Comments.Where(c => c.ArticleId == article.Id).Count(),
                     AuthorName = context.Users.FirstOrDefault(n => n.Id == article.UserId).NickName,
-                    AuthorId = article.UserId,
-                    UserId = JsonSerializer.Deserialize<User>(Configuration["User"]).Id
+                    AuthorId = article.UserId
                 });
             }
             return View(new ArticleListViewModel 
@@ -49,15 +47,11 @@ namespace Blog.Controllers
             });
         }
 
-        
+        [Authorize]
         [HttpGet]
-        public IActionResult Create()
-        {
-            if (Configuration["User"] == null)
-                return RedirectToAction("Authorization", "Home");
-            return View();
-        }
+        public IActionResult Create() => View();
 
+        [Authorize]
         [HttpPost]
         public IActionResult Create(Article article, string StringTags)
         {
@@ -89,7 +83,7 @@ namespace Blog.Controllers
             });
         }
         [HttpPost]
-        public IActionResult Show(string Author, string CommentText, int ArticleId)
+        public IActionResult Show(User Author, string CommentText, int ArticleId)
         {
             context.Comments.Add(new Comment
             {
@@ -105,11 +99,12 @@ namespace Blog.Controllers
                 Tags = context.Tags.Where(t => t.ArticleId == ArticleId).ToList()
             });
         }
-
+        [Authorize]
         [HttpGet]
         public IActionResult Edit(int ArticleId) =>
            View(context.Articles.Where(a => a.Id == ArticleId).FirstOrDefault());
 
+        [Authorize]
         [HttpPost]
         public IActionResult Edit(Article ArticleEdited)
         {
