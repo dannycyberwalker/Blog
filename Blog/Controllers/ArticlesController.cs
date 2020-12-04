@@ -1,23 +1,25 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 using System.Collections.Generic;
 using System.Linq;
 using Blog.Models;
-using Microsoft.Extensions.Configuration;
 using Blog.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Blog.Controllers
 {
     public class ArticlesController : Controller
     {
         private ApplicationDbContext context;
-        private IConfiguration Configuration;
+        private UserManager<User> userManager;
         public int PageSize = 4;
-        public ArticlesController(ApplicationDbContext context, IConfiguration configuration)
+        public ArticlesController(ApplicationDbContext context, UserManager<User> userManager)
         {
             this.context = context;
-            Configuration = configuration;
+            this.userManager = userManager;
         }
         [HttpGet]
         public IActionResult List(int PageId = 1)
@@ -30,7 +32,8 @@ namespace Blog.Controllers
                     Article = article,
                     CountComments = context.Comments.Where(c => c.ArticleId == article.Id).Count(),
                     AuthorName = context.Users.FirstOrDefault(n => n.Id == article.UserId).NickName,
-                    AuthorId = article.UserId
+                    AuthorId = article.UserId,
+                    UserId = userManager.GetUserId(User)
                 });
             }
             return View(new ArticleListViewModel 
@@ -65,7 +68,10 @@ namespace Blog.Controllers
                         article.Tags.Add(new Tag { Name = TagName });
                     }
                 }
-                article.UserId = JsonSerializer.Deserialize<User>(Configuration["User"]).Id;
+                ClaimsPrincipal currentUser = User;
+                var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+                article.UserId = currentUserId;
+
                 context.Articles.Add(article);
                 context.SaveChanges();
             }
@@ -73,32 +79,37 @@ namespace Blog.Controllers
         }
 
         [HttpGet]
-        public IActionResult Show(int ArticleId)
-        {
-            return View(new ArticleViewModel 
+        public IActionResult Show(int ArticleId)=> View(new ArticleViewModel 
             {
                 Article = context.Articles.FirstOrDefault(a => a.Id == ArticleId),
-                Comments = context.Comments.Where(c => c.ArticleId == ArticleId).ToList(),
+                Comments = context.Comments.Include(x => x.Author).Where(c => c.ArticleId == ArticleId).ToList(),
                 Tags = context.Tags.Where(t => t.ArticleId == ArticleId).ToList()
             });
-        }
+
+
+        /// <summary>
+        /// Post method "Show" add new comment.
+        /// </summary>
+        [Authorize]
         [HttpPost]
-        public IActionResult Show(User Author, string CommentText, int ArticleId)
+        public async Task<IActionResult> Show(string CommentText, int ArticleId)
         {
+            Blog.Models.User CurrentUser = await userManager.GetUserAsync(User); 
             context.Comments.Add(new Comment
             {
                 Text = CommentText,
-                Author = Author,
+                Author = CurrentUser,
                 ArticleId = ArticleId
             });
             context.SaveChanges();
             return View(new ArticleViewModel
             {
                 Article = context.Articles.FirstOrDefault(a => a.Id == ArticleId),
-                Comments = context.Comments.Where(c => c.ArticleId == ArticleId).ToList(),
+                Comments = context.Comments.Include(x => x.Author).Where(c => c.ArticleId == ArticleId).ToList(),
                 Tags = context.Tags.Where(t => t.ArticleId == ArticleId).ToList()
             });
         }
+
         [Authorize]
         [HttpGet]
         public IActionResult Edit(int ArticleId) =>

@@ -1,34 +1,36 @@
 ﻿@model Article
 
-<form asp-controller="Articles" asp-action="Edit">
-    <input type="hidden" name="Id" value="@Model.Id" />
-    <span asp-validation-for="Headline" style="color:red;"></span>
-    <label asp-for="Headline"></label>
-    <input value="@Model.Headline"
-           type="text"
-           name="Headline"
-           class="form-control"
-           aria-label="Headline"
-           aria-describedby="basic-addon1" />
+<div class="tm-post-col">
+    <form asp-controller="Articles" asp-action="Edit">
+        <input type="hidden" name="Id" value="@Model.Id" />
+        <span asp-validation-for="Headline" style="color:red;"></span>
+        <label asp-for="Headline"></label>
+        <input value="@Model.Headline"
+               type="text"
+               name="Headline"
+               class="form-control"
+               aria-label="Headline"
+               aria-describedby="basic-addon1" />
 
-    <span asp-validation-for="ShortDescription"></span>
-    <label asp-for="ShortDescription"></label>
-    <textarea name="ShortDescription"
-              class="form-control">@Model.ShortDescription</textarea>
+        <span asp-validation-for="ShortDescription"></span>
+        <label asp-for="ShortDescription"></label>
+        <textarea name="ShortDescription"
+                  class="form-control">@Model.ShortDescription</textarea>
 
-    <span asp-validation-for="Text"></span>
-    <label asp-for="Text"></label>
-    <textarea name="Text"
-              class="form-control">@Model.Text</textarea>
+        <span asp-validation-for="Text"></span>
+        <label asp-for="Text"></label>
+        <textarea name="Text"
+                  class="form-control">@Model.Text</textarea>
 
-    <span asp-validation-for="PictureLink"></span>
-    <label asp-for="PictureLink"></label>
-    <input value="@Model.PictureLink"
-           type="text"
-           name="PictureLink"
-           class="form-control"
-           aria-label="PictureLink"
-           aria-describedby="basic-addon1" />
-    <br>
-    <button type="submit" class="btn btn-primary">Закончить редактирование</button>
-</form>
+        <span asp-validation-for="PictureLink"></span>
+        <label asp-for="PictureLink"></label>
+        <input value="@Model.PictureLink"
+               type="text"
+               name="PictureLink"
+               class="form-control"
+               aria-label="PictureLink"
+               aria-describedby="basic-addon1" />
+        <br>
+        <button type="submit" class="btn btn-primary">Закончить редактирование</button>
+    </form>
+</div>

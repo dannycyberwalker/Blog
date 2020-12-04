@@ -31,41 +31,51 @@
             <div>
                 @if (Model.Comments != null)
                 {
-                    <h2 class="tm-color-primary tm-post-title">Comments</h2>
-                    <hr class="tm-hr-primary tm-mb-45">
-                    @foreach (Comment comment in Model.Comments)
-                    {
-                        <div class="tm-comment tm-mb-45">
-                            <figure class="tm-comment-figure">
-                                <img src="~/img/CommentIcon.png" alt="Image" height="60" width="60" class="mb-2 rounded-circle img-thumbnail">
-                                <figcaption class="tm-color-primary text-center">@comment?.Author</figcaption>
-                            </figure>
-                            <div>
-                                <p>
-                                    @comment?.Text
-                                </p>
-                                <div class="d-flex justify-content-between">
-                                    <span class="tm-color-primary">@comment?.CreateTime</span>
+                            <h2 class="tm-color-primary tm-post-title">Comments</h2>
+                            <hr class="tm-hr-primary tm-mb-45">
+                            @foreach (var comment in Model.Comments)
+                             {
+                            <div class="tm-comment tm-mb-45">
+                                <figure class="tm-comment-figure">
+                                    <img src="~/img/CommentIcon.png" alt="Image" height="60" width="60" class="mb-2 rounded-circle img-thumbnail">
+                                    <figcaption class="tm-color-primary text-center">@comment.Author.NickName</figcaption>
+                                </figure>
+                                <div>
+                                    <p>
+                                        @comment?.Text
+                                    </p>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="tm-color-primary">@comment.CreateTime.ToString("D")</span>
+                                    </div>
                                 </div>
                             </div>
+                            }
+                 }
+                <!--Comment form-->
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <form asp-action="Show" asp-controller="Articles" class="mb-5 tm-comment-form">
+                        <h2 class="tm-color-primary tm-post-title mb-4">Твой комментарий</h2>
+                        <div class="mb-4">
+                            <textarea 
+                                      class="form-control" 
+                                      placeholder="Поле для комментария" 
+                                      name="CommentText" rows="6"></textarea>
                         </div>
-                    }
+                        <div class="mb-4">
+                            <input type="hidden" name="ArticleId" value="@Model.Article.Id" />
+                        </div>
+                        <div class="text-right">
+                            <button type="submit" class="tm-btn tm-btn-primary tm-btn-small">Отправить</button>
+                        </div>
+                    </form>
                 }
-                <form asp-action="Show" asp-controller="Articles" class="mb-5 tm-comment-form">
-                    <h2 class="tm-color-primary tm-post-title mb-4">Твой комментарий</h2>
-                    <div class="mb-4">
-                        <input class="form-control" name="Author" type="text">
+                else
+                { 
+                    <div class="alert alert-warning">
+                        Войдите или зарегистрируйтесь, что бы писать комментарии.
                     </div>
-                    <div class="mb-4">
-                        <textarea class="form-control" name="CommentText" rows="6"></textarea>
-                    </div>
-                    <div class="mb-4">
-                        <input type="hidden" name="ArticleId" value="@Model.Article.Id" />
-                    </div>
-                    <div class="text-right">
-                        <button type="submit" class="tm-btn tm-btn-primary tm-btn-small">Отправить</button>
-                    </div>
-                </form>
+                }
             </div>
         </div>
     </div>
