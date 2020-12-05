@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 namespace Blog.Models.ViewModels
 {
     public class PagingInfo
@@ -8,6 +7,6 @@ namespace Blog.Models.ViewModels
         public int ItemsPerPage { get; set; }
         public int CurrentPage { get; set; }
         public int TotalPages =>
-        (int)Math.Ceiling((decimal)TotalItems / ItemsPerPage);
+        (int)System.Math.Ceiling((decimal)TotalItems / ItemsPerPage);
     }
 }

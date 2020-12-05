@@ -31,20 +31,16 @@ namespace Blog.Controllers
                     UserName = model.Email,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
-                    NickName = model.NickName
+                    NickName = model.NickName,
+                    CreateAccountTime = model.CreateAccountTime
                 };
                 var result = await userManager.CreateAsync(user, model.Password);
+
                 if (result.Succeeded)
-                {
-                    return RedirectToAction("Index");
-                }
+                    return RedirectToAction("Index", "Users");
                 else
-                {
                     foreach (var error in result.Errors)
-                    {
                         ModelState.AddModelError(string.Empty, error.Description);
-                    }
-                }
             }
             return View(model);
         }
@@ -63,7 +59,8 @@ namespace Blog.Controllers
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                NickName = user.NickName
+                NickName = user.NickName,
+                CreateAccountTime = user.CreateAccountTime
             };
             return View(model);
         }
@@ -81,10 +78,12 @@ namespace Blog.Controllers
                     user.FirstName = model.FirstName;
                     user.LastName = model.LastName;
                     user.NickName = model.NickName;
+                    user.CreateAccountTime = model.CreateAccountTime;
 
                     var result = await userManager.UpdateAsync(user);
+
                     if (result.Succeeded)
-                        return RedirectToAction("Index");
+                        return RedirectToAction("Index", "Users");
                     else
                         foreach (var error in result.Errors)
                             ModelState.AddModelError(string.Empty, error.Description);
@@ -101,7 +100,7 @@ namespace Blog.Controllers
             {
                 IdentityResult result = await userManager.DeleteAsync(user);
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Users");
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+﻿
 
 namespace Blog.Models
 {
@@ -6,7 +6,7 @@ namespace Blog.Models
     {
         public int Id { get; set; }
         public string Text { get; set; }
-        public DateTime CreateTime { get; set; }
+        public System.DateTime CreateTime { get; set; }
 
         public User Author { get; set; }
         public string UserId { get; set; }
@@ -15,7 +15,7 @@ namespace Blog.Models
         public int ArticleId { get; set; }
         public Comment()
         {
-            CreateTime = DateTime.UtcNow;
+            CreateTime = System.DateTime.UtcNow;
         }
     }
 }
