@@ -1,5 +1,6 @@
 ﻿using Blog.Models;
 using Blog.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
@@ -10,9 +11,10 @@ namespace Blog.Controllers
     /// <summary>
     /// Controller for admin panel
     /// </summary>
+    [Authorize(Roles ="admin")]
     public class UsersController : Controller
     {
-        UserManager<User> userManager;
+        readonly UserManager<User> userManager;
 
         public UsersController(UserManager<User> userManager)
         {
@@ -100,9 +102,7 @@ namespace Blog.Controllers
         {
             User user = await userManager.FindByIdAsync(id);
             if (user != null)
-            {
-                IdentityResult result = await userManager.DeleteAsync(user);
-            }
+                await userManager.DeleteAsync(user);
             return RedirectToAction("Index", "Users");
         }
         [HttpGet]

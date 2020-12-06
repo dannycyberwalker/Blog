@@ -13,8 +13,8 @@ namespace Blog.Controllers
 {
     public class ArticlesController : Controller
     {
-        private ApplicationDbContext context;
-        private UserManager<User> userManager;
+        readonly private ApplicationDbContext context;
+        readonly private UserManager<User> userManager;
         public int PageSize = 4;
         public ArticlesController(ApplicationDbContext context, UserManager<User> userManager)
         {
