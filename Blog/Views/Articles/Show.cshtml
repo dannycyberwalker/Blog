@@ -1,9 +1,9 @@
-﻿@model ArticleViewModel
+﻿@model Article
 <!-- Image -->
 <div class="row tm-row">
     <div class="col-12">
         <hr class="tm-hr-primary tm-mb-55">
-        <img src="@Model.Article.PictureLink" width="954" height="535" alt="Image" class="img-fluid">
+        <img src="@Model.PictureLink" width="954" height="535" alt="Image" class="img-fluid">
     </div>
 </div>
 <div class="row tm-row">
@@ -11,10 +11,10 @@
         <div class="tm-post-full">
             <!--Article-->
             <div class="mb-4">
-                <h2 class="pt-2 tm-color-primary tm-post-title">@Model.Article.Headline</h2>
-                <p class="tm-mb-40">@Model.Article.CreateTime</p>
+                <h2 class="pt-2 tm-color-primary tm-post-title">@Model.Headline</h2>
+                <p class="tm-mb-40">@Model.CreateTime.ToString("D")</p>
                 <p>
-                    @Model.Article.Text
+                    @Model.Text
                 </p>
                 <span class="d-block text-right tm-color-primary">
                     @{
@@ -63,7 +63,7 @@
                                       name="CommentText" rows="6"></textarea>
                         </div>
                         <div class="mb-4">
-                            <input type="hidden" name="ArticleId" value="@Model.Article.Id" />
+                            <input type="hidden" name="ArticleId" value="@Model.Id" />
                         </div>
                         <div class="text-right">
                             <button type="submit" class="tm-btn tm-btn-primary tm-btn-small">Отправить</button>

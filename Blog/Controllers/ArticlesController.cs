@@ -25,7 +25,8 @@ namespace Blog.Controllers
         public IActionResult List(int PageId = 1)
         {
             List<ListViewModel> models = new List<ListViewModel>();
-            foreach(var article in context.Articles)
+            string userId = userManager.GetUserId(User);
+            foreach (var article in context.Articles)
             {
                 models.Add(new ListViewModel
                 {
@@ -33,7 +34,7 @@ namespace Blog.Controllers
                     CountComments = context.Comments.Where(c => c.ArticleId == article.Id).Count(),
                     AuthorName = context.Users.FirstOrDefault(n => n.Id == article.UserId).NickName,
                     AuthorId = article.UserId,
-                    UserId = userManager.GetUserId(User)
+                    UserId = userId
                 });
             }
             return View(new ArticleListViewModel 
@@ -79,12 +80,19 @@ namespace Blog.Controllers
         }
 
         [HttpGet]
-        public IActionResult Show(int ArticleId)=> View(new ArticleViewModel 
-            {
-                Article = context.Articles.FirstOrDefault(a => a.Id == ArticleId),
-                Comments = context.Comments.Include(x => x.Author).Where(c => c.ArticleId == ArticleId).ToList(),
-                Tags = context.Tags.Where(t => t.ArticleId == ArticleId).ToList()
-            });
+        public IActionResult Show(int ArticleId) 
+        {
+            Article currentArticle = 
+                context.Articles
+                .Include(c=>c.Comments)
+                    .ThenInclude(a => a.Author)
+                .Where(a => a.Id == ArticleId)
+                .FirstOrDefault();
+            context.Entry(currentArticle).Collection(t => t.Tags);
+            context.Entry(currentArticle).Collection(c => c.Comments);
+            return View(currentArticle);
+        }
+            
 
 
         /// <summary>
@@ -94,7 +102,7 @@ namespace Blog.Controllers
         [HttpPost]
         public async Task<IActionResult> Show(string CommentText, int ArticleId)
         {
-            Blog.Models.User CurrentUser = await userManager.GetUserAsync(User); 
+            User CurrentUser = await userManager.GetUserAsync(User); 
             context.Comments.Add(new Comment
             {
                 Text = CommentText,
@@ -102,12 +110,7 @@ namespace Blog.Controllers
                 ArticleId = ArticleId
             });
             context.SaveChanges();
-            return View(new ArticleViewModel
-            {
-                Article = context.Articles.FirstOrDefault(a => a.Id == ArticleId),
-                Comments = context.Comments.Include(x => x.Author).Where(c => c.ArticleId == ArticleId).ToList(),
-                Tags = context.Tags.Where(t => t.ArticleId == ArticleId).ToList()
-            });
+            return RedirectToAction("Show", "Articles", new { ArticleId });
         }
 
         [Authorize]

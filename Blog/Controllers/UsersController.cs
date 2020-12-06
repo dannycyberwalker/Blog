@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Blog.Controllers
 {
+    /// <summary>
+    /// Controller for admin panel
+    /// </summary>
     public class UsersController : Controller
     {
         UserManager<User> userManager;
@@ -101,6 +104,51 @@ namespace Blog.Controllers
                 IdentityResult result = await userManager.DeleteAsync(user);
             }
             return RedirectToAction("Index", "Users");
+        }
+        [HttpGet]
+        public async Task<IActionResult> ChangePassword(string id)
+        {
+            User user = await userManager.FindByIdAsync(id);
+
+            if (user == null)
+                return NotFound();
+
+            ChangePasswordViewModel model = new ChangePasswordViewModel 
+            { 
+                Id = user.Id, 
+                Email = user.Email
+            };
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                User user = await userManager.FindByIdAsync(model.Id);
+                if (user != null)
+                {
+                    var passwordValidator =
+                        HttpContext.RequestServices.GetService(typeof(IPasswordValidator<User>)) as IPasswordValidator<User>;
+                    var passwordHasher =
+                        HttpContext.RequestServices.GetService(typeof(IPasswordHasher<User>)) as IPasswordHasher<User>;
+
+                    IdentityResult result =
+                        await passwordValidator.ValidateAsync(userManager, user, model.NewPassword);
+                    if (result.Succeeded)
+                    {
+                        user.PasswordHash = passwordHasher.HashPassword(user, model.NewPassword);
+                        await userManager.UpdateAsync(user);
+                        return RedirectToAction("Index", "Users");
+                    }
+                    else
+                        foreach (var error in result.Errors)
+                            ModelState.AddModelError(string.Empty, error.Description);
+                }
+                else
+                    ModelState.AddModelError(string.Empty, "Пользователь не найден");
+            }
+            return View(model);
         }
     }
 }

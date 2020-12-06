@@ -20,11 +20,10 @@
         </p>
         @if (item.UserId == item.AuthorId)
         {
-            <div class="alert alert-link">
-                <a href="@Url.RouteUrl(new {controller = "Articles", action = "Edit",  ArticleId = item.Article.Id})">
-                    Edit
-                </a>
-            </div>
+            <a href="@Url.RouteUrl(new {controller = "Articles", action = "Edit",  ArticleId = item.Article.Id})">
+               Edit
+            </a>
+                
         }
             <div class="d-flex justify-content-between tm-pt-45">
                 <span class="tm-color-primary">@item.Article.CreateTime.ToString("D")</span>
