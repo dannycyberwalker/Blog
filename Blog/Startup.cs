@@ -48,10 +48,10 @@ namespace Blog
                 routes.MapRoute(
                     name: "pagination",
                     template: "Articles/Page{PageId}",
-                    defaults: new { Controller = "Articles", Action = "List" });
+                    defaults: new { Controller = "Articles", Action = "Index" });
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Articles}/{action=List}");
+                    template: "{controller=Articles}/{action=Index}");
             });
         }
     }

@@ -8,46 +8,58 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Blog.Controllers
 {
     public class ArticlesController : Controller
     {
+        readonly private int PageSize = 4;
         readonly private ApplicationDbContext context;
         readonly private UserManager<User> userManager;
-        public int PageSize = 4;
         public ArticlesController(ApplicationDbContext context, UserManager<User> userManager)
         {
             this.context = context;
             this.userManager = userManager;
         }
         [HttpGet]
-        public IActionResult List(int PageId = 1)
+        public async Task<IActionResult> Index(string name, int page = 1,
+            SortState sortOrder = SortState.DateDesc)
         {
-            List<ListViewModel> models = new List<ListViewModel>();
-            string userId = userManager.GetUserId(User);
-            foreach (var article in context.Articles)
+            IQueryable<Article> articles = context.Articles
+                .Include(a => a.Author)
+                .Include(c => c.Comments)
+                .OrderBy(a => a.Id);
+
+            if (!string.IsNullOrEmpty(name))
+                articles = articles.Where(p => p.Author.NickName.Contains(name));
+
+            switch (sortOrder)
             {
-                models.Add(new ListViewModel
-                {
-                    Article = article,
-                    CountComments = context.Comments.Where(c => c.ArticleId == article.Id).Count(),
-                    AuthorName = context.Users.FirstOrDefault(n => n.Id == article.UserId).NickName,
-                    AuthorId = article.UserId,
-                    UserId = userId
-                });
+                case SortState.NumberOfCommentsAsc:
+                    articles = articles.OrderBy(s => s.Comments.Count);
+                    break;
+                case SortState.NumberOfCommentsDesc:
+                    articles = articles.OrderByDescending(s => s.Comments.Count);
+                    break;
+                case SortState.DateAsc:
+                    articles = articles.OrderBy(s => s.CreateTime);
+                    break;
+                default:
+                    articles = articles.OrderByDescending(s => s.CreateTime);
+                    break;
             }
-            return View(new ArticleListViewModel 
+
+            var countArticles = await articles.CountAsync();
+            var itemsPerPage =
+                await articles.Skip((page - 1) * PageSize).Take(PageSize).ToListAsync();
+
+            return View(new ArticlesIndexViewModel 
             {
-                ListViewModels = models.OrderBy(a => a.Article.Id)
-                .Skip((PageId - 1) * PageSize)
-                .Take(PageSize).ToList(), 
-                PagingInfo = new PagingInfo 
-                {
-                    CurrentPage = PageId, 
-                    ItemsPerPage = PageSize, 
-                    TotalItems = models.Count()
-                }
+                PageViewModel = new PageViewModel(countArticles, page, PageSize),
+                SortViewModel = new SortViewModel(sortOrder),
+                FilterViewModel = new FilterViewModel(name),
+                Articles = itemsPerPage
             });
         }
 

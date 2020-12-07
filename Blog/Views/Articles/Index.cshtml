@@ -1,0 +1,98 @@
+﻿@model ArticlesIndexViewModel
+@inject UserManager<User> userManager
+
+<!--Search + Filters-->
+<div class="row tm-row">
+    <form method="get">
+        <div class="input-group mb-3">
+            <input name="name"
+                   type="text"
+                   aria-describedby="button-addon"
+                   value="@Model.FilterViewModel.SelectedName" 
+                   placeholder="Поиск по автору" 
+                   class="form-control" />
+            <div class="input-group-append">
+                <input type="submit"
+                       id="button-addon"
+                       value="Применить"
+                       class="btn btn-outline-primary" />
+            </div>
+        </div>
+    </form>
+    <a asp-action="Index"
+       asp-controller="Articles"
+       asp-route-sortOrder="@(Model.SortViewModel.DateSort)"
+       asp-route-name="@(Model.FilterViewModel.SelectedName)">Дата</a>
+    <a asp-action="Index"
+       asp-controller="Articles"
+       asp-route-sortOrder="@(Model.SortViewModel.NumberOfCommentsSort)"
+       asp-route-name="@(Model.FilterViewModel.SelectedName)">Популярность</a>
+</div>
+
+<!--Articles-->
+<div class="row tm-row">
+    @foreach (var article in Model.Articles)
+     {
+        <article class="col-12 col-md-6 tm-post">
+            <hr class="tm-hr-primary">
+            <a href="@Url.RouteUrl(new {controller = "Articles", action = "Show",  ArticleId = article.Id})"
+               class="effect-lily tm-post-link tm-pt-60">
+                <div class="tm-post-link-inner">
+                    <img src="@article.PictureLink" alt="Image" class="img-fluid">
+                </div>
+                @if (DateTime.Now < article.CreateTime.AddDays(1))
+                 {
+                    <span class="position-absolute tm-new-badge">New</span>
+                 }
+                <h2 class="tm-pt-30 tm-color-primary tm-post-title">@article.Headline</h2>
+            </a>
+            <p class="tm-pt-30">
+                @article.ShortDescription
+            </p>
+            @if (userManager.GetUserId(User) == article.UserId)//article.UserId is Author id.
+             {
+                <a href="@Url.RouteUrl(new {controller = "Articles", action = "Edit",  ArticleId = article.Id})">Edit</a>
+             }
+            <div class="d-flex justify-content-between tm-pt-45">
+                <span class="tm-color-primary">@article.CreateTime.ToString("D")</span>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between">
+                <span>Comments: @article.Comments.Count</span>
+                <span>Author: @article.Author.NickName</span>
+            </div>
+        </article>
+     }
+
+</div>
+<br />
+
+<!--Pagination-->
+<div class="row tm-row">
+   @if (Model.PageViewModel.HasPreviousPage)
+    {
+    <a 
+       asp-action="Index"
+       asp-controller="Articles"
+       asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+       asp-route-name="@(Model.FilterViewModel.SelectedName)"
+       asp-route-sortorder="@(Model.SortViewModel.Current)"
+       class="btn  btn-outline-dark">
+        <i class="glyphicon glyphicon-chevron-left"></i>
+        Назад
+    </a>
+    }
+   @if (Model.PageViewModel.HasNextPage)
+    {
+    <a 
+       asp-action="Index"
+       asp-controller="Articles"
+       asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+       asp-route-name="@(Model.FilterViewModel.SelectedName)"
+       asp-route-sortorder="@(Model.SortViewModel.Current)"
+       class="btn btn-outline-dark">
+        Вперед
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+    }
+</div><br /><br /> 

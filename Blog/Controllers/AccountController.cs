@@ -37,7 +37,7 @@ namespace Blog.Controllers
                 if (result.Succeeded)
                 {
                     await signInManager.SignInAsync(user, false);
-                    return RedirectToAction("List", "Articles");
+                    return RedirectToAction("Index", "Articles");
                 }
                 else
                     foreach (var error in result.Errors)
@@ -64,7 +64,7 @@ namespace Blog.Controllers
                         return Redirect(model.ReturnUrl);
                     }
                     else
-                        return RedirectToAction("List", "Articles");
+                        return RedirectToAction("Index", "Articles");
                 }
                 else
                     ModelState.AddModelError("", "Неправильный логин и (или) пароль");
@@ -76,7 +76,7 @@ namespace Blog.Controllers
         public async Task<IActionResult> Logout()
         {
             await signInManager.SignOutAsync();
-            return RedirectToAction("List", "Articles");
+            return RedirectToAction("Index", "Articles");
         }
 
     }
