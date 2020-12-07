@@ -5,5 +5,6 @@
 * CRUD for Articles
 * Authorization/Authentication
 * Admin panel
+* Roles
 
 
