@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Blog.Controllers
 {
     /// <summary>
-    /// Controller for admin panel
+    /// Controller for editing users
     /// </summary>
     [Authorize(Roles ="admin")]
     public class UsersController : Controller

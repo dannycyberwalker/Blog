@@ -1,4 +1,5 @@
 using Blog.Models;
+using Blog.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -29,6 +30,7 @@ namespace Blog
                 options.Password.RequireUppercase = false; 
                 options.Password.RequireDigit = false; 
             }).AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddTransient<IDataGenerator, GoogleChartDataGenerator>();
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {

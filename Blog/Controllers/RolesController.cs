@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace Blog.Controllers
 {
+    /// <summary>
+    /// Controller for editing roles
+    /// </summary>
     [Authorize(Roles ="admin")]
     public class RolesController : Controller
     {

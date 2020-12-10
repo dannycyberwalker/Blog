@@ -73,22 +73,19 @@ namespace Blog.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (StringTags != null)
+                if (StringTags is null)
                 {
                     article.Tags = new List<Tag>();
                     foreach (string TagName in StringTags.Split(' '))
-                    {
                         article.Tags.Add(new Tag { Name = TagName });
-                    }
                 }
-                ClaimsPrincipal currentUser = User;
-                var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
-                article.UserId = currentUserId;
+                article.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
                 context.Articles.Add(article);
                 context.SaveChanges();
+                return RedirectToAction("Show", "Articles", new { article.Id });
             }
-            return View();
+            return View(article);
         }
 
         [HttpGet]

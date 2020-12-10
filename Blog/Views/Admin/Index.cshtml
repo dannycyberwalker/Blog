@@ -1,0 +1,35 @@
+﻿@model IEnumerable<ChartViewModel>
+<div class="row">
+    <nav class="nav">
+        <a class="nav-link"
+           asp-action="Index"
+           asp-controller="Users">Пользователей</a>
+        <a class="nav-link"
+           asp-action="Index"
+           asp-controller="Roles">Роли</a>
+        <a class="nav-link"
+           asp-action="Index"
+           asp-controller="Articles">Статьи</a>
+    </nav>
+</div>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<div class="row">
+    <div class="col">
+        @for (int i = 0; i < Model.Count(); i++)
+         {
+            <div id="@("admin_chart" + i)"></div>
+         }    
+    </div>
+</div>
+<script>
+    @{
+        int j = 0;
+        foreach(var chart in Model)
+        {
+            <text>
+                Draw('@chart.LineName', '@chart.XName', '@chart.YName', '@("admin_chart" + j)' , JSON.parse('@chart.JSONArray'))
+            </text>
+            j++;
+        }
+    }
+</script>

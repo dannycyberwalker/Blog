@@ -3,9 +3,12 @@
   text-align: center;
   word-break: break-all;
 }
-
+#admin_chart{
+    height: 500px;
+    width: 1000px;
+}
 a {
-  color: #0366d6;
+    color: #0366d6;
 }
 
 .btn-primary {
