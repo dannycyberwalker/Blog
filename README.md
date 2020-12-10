@@ -6,5 +6,6 @@
 * Authorization/Authentication
 * Admin panel
 * Roles
+* Filters + Pagination + Sorting
 
 
