@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Linq;
 using Blog.Models;
 using Blog.Models.ViewModels;
@@ -8,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using System;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Blog.Controllers
 {
@@ -65,44 +64,38 @@ namespace Blog.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult Create() => View();
+        public IActionResult Create() 
+        {
+            ViewBag.Categories = new SelectList(context.Categories, "Id", "Name");
+            return View();
+        }
 
         [Authorize]
         [HttpPost]
-        public IActionResult Create(Article article, string StringTags)
+        public IActionResult Create(Article article)
         {
             if (ModelState.IsValid)
             {
-                if (StringTags is null)
-                {
-                    article.Tags = new List<Tag>();
-                    foreach (string TagName in StringTags.Split(' '))
-                        article.Tags.Add(new Tag { Name = TagName });
-                }
                 article.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-
                 context.Articles.Add(article);
                 context.SaveChanges();
-                return RedirectToAction("Show", "Articles", new { article.Id });
+                return RedirectToAction("Show", "Articles", new { ArticleId = article.Id });
             }
             return View(article);
         }
 
         [HttpGet]
-        public IActionResult Show(int ArticleId) 
+        public async  Task<ActionResult> Show(int ArticleId)
         {
-            Article currentArticle = 
+            Article currentArticle = await 
                 context.Articles
-                .Include(c=>c.Comments)
+                .Include(c => c.Category)
+                .Include(c => c.Comments)
                     .ThenInclude(a => a.Author)
                 .Where(a => a.Id == ArticleId)
-                .FirstOrDefault();
-            context.Entry(currentArticle).Collection(t => t.Tags);
-            context.Entry(currentArticle).Collection(c => c.Comments);
+                .SingleAsync();
             return View(currentArticle);
         }
-            
-
 
         /// <summary>
         /// Post method "Show" add new comment.
@@ -124,8 +117,13 @@ namespace Blog.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult Edit(int ArticleId) =>
-           View(context.Articles.Where(a => a.Id == ArticleId).FirstOrDefault());
+        public IActionResult Edit(int ArticleId)
+        {
+            ViewBag.Categories = new SelectList(context.Categories, "Id", "Name");
+            return View(context.Articles
+                .Where(a => a.Id == ArticleId)
+                .FirstOrDefault());
+        }
 
         [Authorize]
         [HttpPost]
@@ -138,6 +136,7 @@ namespace Blog.Controllers
             ArticleFromDb.PictureLink = ArticleEdited.PictureLink;
             ArticleFromDb.ShortDescription = ArticleEdited.ShortDescription;
             ArticleFromDb.Text = ArticleEdited.Text;
+            ArticleFromDb.CategoryId = ArticleEdited.CategoryId;
             context.SaveChanges();
             return RedirectToAction("Show", "Articles", new { ArticleId = ArticleEdited.Id }); ;
         }

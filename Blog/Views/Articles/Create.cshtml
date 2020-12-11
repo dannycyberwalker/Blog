@@ -1,37 +1,34 @@
 ﻿@model Article
     <form asp-controller="Articles" asp-action="Create">
 
-        <span asp-validation-for="Headline" style="color:red;"></span>
+        <span asp-validation-for="Headline"></span>
         <label asp-for="Headline"></label>
         <input type="text"
-               name="Headline"
+               asp-for="Headline"
                class="form-control"
                aria-label="Headline"
                aria-describedby="basic-addon1" />
 
         <span asp-validation-for="ShortDescription"></span>
         <label asp-for="ShortDescription"></label>
-        <textarea name="ShortDescription"
+        <textarea asp-for="ShortDescription"
                   class="form-control"></textarea>
 
         <span asp-validation-for="Text"></span>
-
         <label asp-for="Text"></label>
-        <textarea name="Text"
+        <textarea asp-for="Text"
                   class="form-control"></textarea>
 
         <span asp-validation-for="PictureLink"></span>
         <label asp-for="PictureLink"></label>
         <input type="text"
-               name="PictureLink"
+               asp-for="PictureLink"
                class="form-control"
                aria-label="PictureLink"
                aria-describedby="basic-addon1" />
         <br>
-        <input type="text"
-               name="StringTags"
-               class="form-control"
-               aria-describedby="basic-addon1" />
+        <label asp-for="Category"></label>:
+        <select asp-for="CategoryId" asp-items="ViewBag.Categories"></select><br />
 
         <button type="submit" class="btn btn-primary">Опубликовать статью</button>
     </form>

@@ -7,30 +7,32 @@
         <label asp-for="Headline"></label>
         <input value="@Model.Headline"
                type="text"
-               name="Headline"
+               asp-for="Headline"
                class="form-control"
                aria-label="Headline"
                aria-describedby="basic-addon1" />
 
         <span asp-validation-for="ShortDescription"></span>
         <label asp-for="ShortDescription"></label>
-        <textarea name="ShortDescription"
+        <textarea asp-for="ShortDescription"
                   class="form-control">@Model.ShortDescription</textarea>
 
         <span asp-validation-for="Text"></span>
         <label asp-for="Text"></label>
-        <textarea name="Text"
+        <textarea asp-for="Text"
                   class="form-control">@Model.Text</textarea>
 
         <span asp-validation-for="PictureLink"></span>
         <label asp-for="PictureLink"></label>
         <input value="@Model.PictureLink"
                type="text"
-               name="PictureLink"
+               asp-for="PictureLink"
                class="form-control"
                aria-label="PictureLink"
                aria-describedby="basic-addon1" />
         <br>
+        <label asp-for="Category"></label>:
+        <select asp-for="CategoryId" asp-items="ViewBag.Categories"></select><br />
         <button type="submit" class="btn btn-primary">Закончить редактирование</button>
     </form>
 </div>

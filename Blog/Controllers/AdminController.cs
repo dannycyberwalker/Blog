@@ -5,12 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Blog.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Blog.Controllers
 {
     /// <summary>
     /// Controller for admin panel
     /// </summary>
+    [Authorize(Roles ="admin")]
     public class AdminController : Controller
     {
         readonly private ApplicationDbContext context;
@@ -20,6 +22,7 @@ namespace Blog.Controllers
             this.context = context;
             this.dataGenerator = dataGenerator;
         }
+        
         public IActionResult Index()
         {
             List<ChartViewModel> chartsViewModel = new List<ChartViewModel> 

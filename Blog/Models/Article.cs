@@ -25,7 +25,10 @@ namespace Blog.Models
         public User Author { get; set; }
         public string UserId { get; set; }
 
-        public List<Tag> Tags { get; set; }
+        [Display(Name = "Раздел статьи")]
+        public Category Category { get; set; }
+        public int CategoryId { get; set; }
+
         public List<Comment> Comments { get; set; }
         public DateTime CreateTime { get; set; }
 

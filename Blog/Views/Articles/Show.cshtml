@@ -17,14 +17,7 @@
                     @Model.Text
                 </p>
                 <span class="d-block text-right tm-color-primary">
-                    @{
-                        string ans = "";
-                        if (Model.Tags != null)
-                            foreach (Tag tag in Model.Tags)
-                                ans += "#"+tag.Name + " ";
-                        <text>@ans</text>
-                    }
-
+                    @Model.Category.Name
                 </span>
             </div>
             <!-- Comments -->
@@ -37,7 +30,7 @@
                              {
                             <div class="tm-comment tm-mb-45">
                                 <figure class="tm-comment-figure">
-                                    <img src="~/img/CommentIcon.png" alt="Image" height="60" width="60" class="mb-2 rounded-circle img-thumbnail">
+                                    <img src="~/img/CommentIcon.svg" alt="Image" height="60" width="60" class="mb-2 rounded-circle img-thumbnail">
                                     <figcaption class="tm-color-primary text-center">@comment.Author.NickName</figcaption>
                                 </figure>
                                 <div>
