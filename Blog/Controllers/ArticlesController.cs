@@ -22,7 +22,7 @@ namespace Blog.Controllers
             this.userManager = userManager;
         }
         [HttpGet]
-        public async Task<IActionResult> Index(string name, int page = 1,
+        public async Task<IActionResult> Index(string name, int categoryId = 1 ,int page = 1,
             SortState sortOrder = SortState.DateDesc)
         {
             IQueryable<Article> articles = context.Articles
@@ -32,6 +32,8 @@ namespace Blog.Controllers
 
             if (!string.IsNullOrEmpty(name))
                 articles = articles.Where(p => p.Author.NickName.Contains(name));
+            if (categoryId != 1)
+                articles = articles.Where(c => c.CategoryId == categoryId);
 
             switch (sortOrder)
             {
@@ -57,7 +59,9 @@ namespace Blog.Controllers
             {
                 PageViewModel = new PageViewModel(countArticles, page, PageSize),
                 SortViewModel = new SortViewModel(sortOrder),
-                FilterViewModel = new FilterViewModel(name),
+                FilterViewModel = new FilterViewModel(name, 
+                    context.Categories.Where(c => c.Id == categoryId).Single()),
+                Categories = context.Categories.ToList(),
                 Articles = itemsPerPage
             });
         }
@@ -72,13 +76,13 @@ namespace Blog.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult Create(Article article)
+        public async  Task<IActionResult> Create(Article article)
         {
             if (ModelState.IsValid)
             {
                 article.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 context.Articles.Add(article);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
                 return RedirectToAction("Show", "Articles", new { ArticleId = article.Id });
             }
             return View(article);
@@ -112,17 +116,24 @@ namespace Blog.Controllers
                 ArticleId = ArticleId
             });
             context.SaveChanges();
-            return RedirectToAction("Show", "Articles", new { ArticleId });
+            return RedirectToAction("Show", "Articles", new { ArticleId = ArticleId });
         }
 
         [Authorize]
         [HttpGet]
         public IActionResult Edit(int ArticleId)
         {
-            ViewBag.Categories = new SelectList(context.Categories, "Id", "Name");
-            return View(context.Articles
+            Article article = context.Articles
                 .Where(a => a.Id == ArticleId)
-                .FirstOrDefault());
+                .Single();
+            if (User.FindFirst(ClaimTypes.NameIdentifier).Value == article.UserId
+                || User.IsInRole("admin"))
+            {
+                ViewBag.Categories = new SelectList(context.Categories, "Id", "Name");
+                return View(article);
+            }
+            else
+                return NotFound();
         }
 
         [Authorize]
@@ -131,7 +142,7 @@ namespace Blog.Controllers
         {
            Article ArticleFromDb = context.Articles
                 .Where(a => a.Id == ArticleEdited.Id)
-                .FirstOrDefault();
+                .Single();
             ArticleFromDb.Headline = ArticleEdited.Headline;
             ArticleFromDb.PictureLink = ArticleEdited.PictureLink;
             ArticleFromDb.ShortDescription = ArticleEdited.ShortDescription;

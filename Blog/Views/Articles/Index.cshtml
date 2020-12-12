@@ -9,8 +9,8 @@
             <input name="name"
                    type="text"
                    aria-describedby="button-addon"
-                   value="@Model.FilterViewModel.SelectedName" 
-                   placeholder="Поиск по автору" 
+                   value="@Model.FilterViewModel.SelectedName"
+                   placeholder="Поиск по автору"
                    class="form-control" />
             <div class="input-group-append">
                 <input type="submit"
@@ -23,11 +23,29 @@
     <a asp-action="Index"
        asp-controller="Articles"
        asp-route-sortOrder="@(Model.SortViewModel.DateSort)"
-       asp-route-name="@(Model.FilterViewModel.SelectedName)">Дата</a>
+       asp-route-name="@(Model.FilterViewModel.SelectedName)"
+       asp-route-categoryId="@(Model.FilterViewModel.SelectedCategory.Id)">Дата</a>
     <a asp-action="Index"
        asp-controller="Articles"
        asp-route-sortOrder="@(Model.SortViewModel.NumberOfCommentsSort)"
-       asp-route-name="@(Model.FilterViewModel.SelectedName)">Популярность</a>
+       asp-route-name="@(Model.FilterViewModel.SelectedName)"
+       asp-route-categoryId="@(Model.FilterViewModel.SelectedCategory.Id)">Популярность</a>
+    <div class="dropdown">
+        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Кактегории
+        </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            @foreach (var category in Model.Categories)
+            {
+                <a asp-action="Index"
+                   asp-controller="Articles"
+                   asp-route-sortOrder="@(Model.SortViewModel.NumberOfCommentsSort)"
+                   asp-route-name="@(Model.FilterViewModel.SelectedName)"
+                   asp-route-categoryId ="@(category.Id)"
+                   class="dropdown-item">@(category.Name)</a>
+            }
+        </div>
+    </div>
 </div>
 
 <!--Articles-->
@@ -71,5 +89,6 @@
 <!--Pagination-->
 <page-link page-model="Model.PageViewModel" page-action="Index"
            page-url-name="@(Model.FilterViewModel.SelectedName)"
-           page-url-sortorder="@(Model.SortViewModel.Current)"></page-link>
+           page-url-sortorder="@(Model.SortViewModel.Current)"
+           page-url-categoryId="@(Model.FilterViewModel.SelectedCategory.Id)"></page-link>
 <br /><br /> 

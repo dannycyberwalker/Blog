@@ -2,36 +2,38 @@
 @{
     ViewBag.Title = "Редактирование пользователя";
 }
-<form asp-action="Edit" asp-controller="Users">
-    <div asp-validation-summary="All" class="text-danger"></div>
-    <div class="form-group">
-        <input type="hidden" asp-for="Id" />
-    </div>
-    <div class="form-group">
-        <label asp-for="Email" class="control-label">Email</label>
-        <input type="text" asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="FirstName" class="control-label">Имя</label>
-        <input type="text" asp-for="FirstName" class="form-control" />
-        <span asp-validation-for="FirstName"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="LastName" class="control-label">Фамилия</label>
-        <input type="text" asp-for="LastName" class="form-control" />
-        <span asp-validation-for="LastName"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="NickName" class="control-label">Отображаемое имя</label>
-        <input type="text" asp-for="NickName" class="form-control" />
-        <span asp-validation-for="NickName"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="CreateAccountTime" class="control-label">Дата и время создания аккаунта</label>
-        <input type="datetime" asp-for="CreateAccountTime" class="form-control" />
-    </div><br />
-    <div class="form-group">
-        <input type="submit" value="Сохранить" class="btn btn-outline-secondary" />
-    </div>
-</form>
+<div class="col">
+    <form asp-action="Edit" asp-controller="Users">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group">
+            <input type="hidden" asp-for="Id" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Email" class="control-label">Email</label>
+            <input type="text" asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="FirstName" class="control-label">Имя</label>
+            <input type="text" asp-for="FirstName" class="form-control" />
+            <span asp-validation-for="FirstName"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="LastName" class="control-label">Фамилия</label>
+            <input type="text" asp-for="LastName" class="form-control" />
+            <span asp-validation-for="LastName"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="NickName" class="control-label">Отображаемое имя</label>
+            <input type="text" asp-for="NickName" class="form-control" />
+            <span asp-validation-for="NickName"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="CreateAccountTime" class="control-label">Дата и время создания аккаунта</label>
+            <input type="datetime" asp-for="CreateAccountTime" class="form-control" />
+        </div><br />
+        <div class="form-group">
+            <input type="submit" value="Сохранить" class="btn btn-outline-secondary" />
+        </div>
+    </form>
+</div>

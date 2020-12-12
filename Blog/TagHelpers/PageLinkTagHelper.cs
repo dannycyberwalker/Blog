@@ -53,7 +53,7 @@ namespace Blog.TagHelpers
         {
             TagBuilder item = new TagBuilder("li");
             TagBuilder link = new TagBuilder("a");
-            if (pageNumber == this.PageModel.PageNumber)
+            if (pageNumber == PageModel.PageNumber)
             {
                 item.AddCssClass("active");
             }
