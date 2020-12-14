@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ChartViewModel>
+﻿@model IEnumerable<ChartViewModel<string>>
 <div class="row">
     <nav class="nav">
         <a class="nav-link"
@@ -11,25 +11,18 @@
            asp-action="Index"
            asp-controller="Articles">Статьи</a>
     </nav>
+
 </div>
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+<script src="~/js/Chart.js"></script>
 <div class="row">
     <div class="col">
-        @for (int i = 0; i < Model.Count(); i++)
-         {
-            <div id="@("admin_chart" + i)"></div>
-         }    
+        @foreach (var chart in Model)
+        {
+            <plotly-chart title="@(chart.Title)"
+                          x-values="@(chart.XValues)"
+                          y-values="@(chart.YValues)"></plotly-chart>
+        }
     </div>
 </div>
-<script>
-    @{
-        int j = 0;
-        foreach(var chart in Model)
-        {
-            <text>
-                Draw('@chart.LineName', '@chart.XName', '@chart.YName', '@("admin_chart" + j)' , JSON.parse('@chart.JSONArray'))
-            </text>
-            j++;
-        }
-    }
-</script>
+

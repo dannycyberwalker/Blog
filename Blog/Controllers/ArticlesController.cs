@@ -32,24 +32,27 @@ namespace Blog.Controllers
 
             if (!string.IsNullOrEmpty(name))
                 articles = articles.Where(p => p.Author.NickName.Contains(name));
-            if (categoryId != 1)
+            else if (categoryId != 1)
                 articles = articles.Where(c => c.CategoryId == categoryId);
-
-            switch (sortOrder)
+            else
             {
-                case SortState.NumberOfCommentsAsc:
-                    articles = articles.OrderBy(s => s.Comments.Count);
-                    break;
-                case SortState.NumberOfCommentsDesc:
-                    articles = articles.OrderByDescending(s => s.Comments.Count);
-                    break;
-                case SortState.DateAsc:
-                    articles = articles.OrderBy(s => s.CreateTime);
-                    break;
-                default:
-                    articles = articles.OrderByDescending(s => s.CreateTime);
-                    break;
+                switch (sortOrder)
+                {
+                    case SortState.NumberOfCommentsAsc:
+                        articles = articles.OrderBy(s => s.Comments.Count);
+                        break;
+                    case SortState.NumberOfCommentsDesc:
+                        articles = articles.OrderByDescending(s => s.Comments.Count);
+                        break;
+                    case SortState.DateAsc:
+                        articles = articles.OrderBy(s => s.CreateTime);
+                        break;
+                    default:
+                        articles = articles.OrderByDescending(s => s.CreateTime);
+                        break;
+                }
             }
+            
 
             var countArticles = await articles.CountAsync();
             var itemsPerPage =

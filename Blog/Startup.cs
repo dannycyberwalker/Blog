@@ -30,7 +30,7 @@ namespace Blog
                 options.Password.RequireUppercase = false; 
                 options.Password.RequireDigit = false; 
             }).AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddTransient<IDataGenerator, GoogleChartDataGenerator>();
+            services.AddTransient<ChartViewModelGenerator>();
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
