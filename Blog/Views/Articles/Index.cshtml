@@ -39,7 +39,7 @@
             {
                 <a asp-action="Index"
                    asp-controller="Articles"
-                   asp-route-sortOrder="@(Model.SortViewModel.NumberOfCommentsSort)"
+                   asp-route-sortOrder="@(Model.SortViewModel.Current)"
                    asp-route-name="@(Model.FilterViewModel.SelectedName)"
                    asp-route-categoryId ="@(category.Id)"
                    class="dropdown-item">@(category.Name)</a>

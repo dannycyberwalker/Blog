@@ -11,17 +11,17 @@ namespace Blog.Models.ViewModels
 
         [Required]
         [Display(Name = "Имя")]
-        [StringLength(100, ErrorMessage = "Поле {0} должно иметь минимум {2} и максимум {1} символов.", MinimumLength = 1)]
+        [StringLength(100, ErrorMessage = "Поле {0} должно иметь минимум {2} и максимум {1} символов.", MinimumLength = 2)]
         public string FirstName { get; set; }
 
         [Required]
         [Display(Name = "Фамилия")]
-        [StringLength(100, ErrorMessage = "Поле {0} должно иметь минимум {2} и максимум {1} символов.", MinimumLength = 5)]
+        [StringLength(100, ErrorMessage = "Поле {0} должно иметь минимум {2} и максимум {1} символов.", MinimumLength = 2)]
         public string LastName { get; set; }
 
         [Required]
         [Display(Name = "Отображаемое имя")]
-        [StringLength(100, ErrorMessage = "Поле {0} должно иметь минимум {2} и максимум {1} символов.", MinimumLength = 5)]
+        [StringLength(100, ErrorMessage = "Поле {0} должно иметь минимум {2} и максимум {1} символов.", MinimumLength = 2)]
         public string NickName { get; set; }
 
         [Required]

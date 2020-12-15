@@ -1,0 +1,9 @@
+﻿@model Category
+
+<form method="post" class="btn-group-vertical">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <label asp-for="Name"></label>
+    <input type="text" asp-for="Name" /><br />  
+    <button type="submit" class="btn btn-primary">Создать</button>
+</form>
+    

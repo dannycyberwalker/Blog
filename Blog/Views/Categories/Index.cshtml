@@ -1,0 +1,37 @@
+﻿@model IEnumerable<Category>
+
+<div class="container">
+    <div class="row">
+        <a class="btn btn-sm btn-primary"
+           asp-action="Create"
+           asp-controller="Categories">Создать</a> 
+    </div>
+    <div class="row">
+        <table>
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Эелемнты управления</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var category in Model)
+                {
+                    <tr>
+                        <td>@category.Name</td>
+                        <td>
+                            <form asp-action="Delete" asp-controller="Categories" method="post" asp-route-id="@category.Id">
+
+                                <a class="btn btn-sm btn-primary"
+                                   asp-action="Edit"
+                                   asp-controller="Categories"
+                                   asp-route-id="@category.Id">Изменить</a>
+                                <button  type="submit" class="btn btn-sm btn-danger">Удалить</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
