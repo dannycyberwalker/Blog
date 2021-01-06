@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 
 namespace Blog.Models.ViewModels
@@ -34,5 +35,8 @@ namespace Blog.Models.ViewModels
         [DataType(DataType.Password)]
         [Display(Name = "Подтвердить пароль")]
         public string PasswordConfirm { get; set; }
+        [Required]
+        [Display(Name = "Фото профиля")]
+        public IFormFile Avatar { get; set; }
     }
 }

@@ -35,7 +35,7 @@ namespace Blog.Models
         [Display(Name = "Ссылка на картинку")]
         [Required(ErrorMessage = "Не коректная информация")]
         [Url(ErrorMessage = "Не корректная ссылка")]
-        public string PictureLink { get; set; }   
+        public string PictureName { get; set; }   
 
         public Article()
         {

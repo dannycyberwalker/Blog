@@ -20,7 +20,7 @@ namespace Blog.Services
 
             for (DateTime i = From; i < To; i = i.AddDays(StepOfDays))
             {
-                int commentsCount = DatesOfCreation.Where(d => d > i && d < i.AddDays(StepOfDays)).Count();
+                int commentsCount = DatesOfCreation.Count(d => d > i && d < i.AddDays(StepOfDays));
                 model.XValues.Add(i.ToString("d") + "-" + i.AddDays(1).ToString("d"));
                 model.YValues.Add(commentsCount);
             }

@@ -22,6 +22,8 @@ namespace Blog.Models
         [StringLength(30, MinimumLength = 2, ErrorMessage = "Длина строки должна быть от 2 до 30 символов")]
         [Required(ErrorMessage = "Не коректная информация")]
         public string NickName { get; set; }
+        [Display(Name = "Фото профиля")]
+        public byte[] Avatar { get; set; }
 
         public List<Article> Articles { get; set; }
         public DateTime CreateAccountTime { get; set; }

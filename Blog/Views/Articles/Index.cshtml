@@ -57,7 +57,7 @@
             <a href="@Url.RouteUrl(new {controller = "Articles", action = "Show",  ArticleId = article.Id})"
                class="effect-lily tm-post-link tm-pt-60">
                 <div class="tm-post-link-inner">
-                    <img src="@article.PictureLink" alt="Image" class="img-fluid">
+                    <img src="@article.PictureName" alt="Image" class="img-fluid">
                 </div>
                 @if (DateTime.Now < article.CreateTime.AddDays(1))
                  {

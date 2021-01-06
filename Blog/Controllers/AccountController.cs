@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.IO;
+using Microsoft.AspNetCore.Mvc;
 using Blog.Models;
 using System.Threading.Tasks;
 using Blog.Models.ViewModels;
@@ -25,13 +26,22 @@ namespace Blog.Controllers
         {
             if (ModelState.IsValid)
             {
+                byte[] imageData = null;
+                if (model.Avatar != null)
+                {
+                    using (var binaryReader = new BinaryReader(model.Avatar.OpenReadStream()))
+                    {
+                        imageData = binaryReader.ReadBytes((int)model.Avatar.Length);
+                    }
+                }
                 User user = new User 
                 {
                     Email = model.Email, 
                     UserName = model.Email, 
                     FirstName = model.FirstName,
                     LastName = model.LastName,
-                    NickName = model.NickName
+                    NickName = model.NickName,
+                    Avatar =  imageData
                 };
                 var result = await userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)

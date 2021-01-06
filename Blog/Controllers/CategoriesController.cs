@@ -28,17 +28,13 @@ namespace Blog.Controllers
         }
         public IActionResult Edit(int id) 
         {
-            Category category = context.Categories
-                .Where(c => c.Id == id)
-                .Single();
+            Category category = context.Categories.Single(c => c.Id == id);
             return View(category); 
         }
         [HttpPost]
         public IActionResult Edit(Category editedCategory)
         {
-            Category fromDb = context.Categories
-                .Where(c => c.Id == editedCategory.Id)
-                .Single();
+            Category fromDb = context.Categories.Single(c => c.Id == editedCategory.Id);
             fromDb.Name = editedCategory.Name;
             context.SaveChanges();
             return RedirectToAction("Index", "Categories");
@@ -46,9 +42,7 @@ namespace Blog.Controllers
         [HttpPost]
         public IActionResult Delete(int id)
         {
-            Category category = context.Categories
-                .Where(c => c.Id == id)
-                .Single();
+            Category category = context.Categories.Single(c => c.Id == id);
             context.Categories.Remove(category);
             context.SaveChanges();
             return RedirectToAction("Index", "Categories");

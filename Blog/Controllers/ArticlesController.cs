@@ -63,7 +63,7 @@ namespace Blog.Controllers
                 PageViewModel = new PageViewModel(countArticles, page, PageSize),
                 SortViewModel = new SortViewModel(sortOrder),
                 FilterViewModel = new FilterViewModel(name, 
-                    context.Categories.Where(c => c.Id == categoryId).Single()),
+                    context.Categories.Single(c => c.Id == categoryId)),
                 Categories = context.Categories.ToList(),
                 Articles = itemsPerPage
             });
@@ -126,9 +126,7 @@ namespace Blog.Controllers
         [HttpGet]
         public IActionResult Edit(int ArticleId)
         {
-            Article article = context.Articles
-                .Where(a => a.Id == ArticleId)
-                .Single();
+            Article article = context.Articles.Single(a => a.Id == ArticleId);
             if (User.FindFirst(ClaimTypes.NameIdentifier).Value == article.UserId
                 || User.IsInRole("admin"))
             {
@@ -143,16 +141,14 @@ namespace Blog.Controllers
         [HttpPost]
         public IActionResult Edit(Article ArticleEdited)
         {
-           Article ArticleFromDb = context.Articles
-                .Where(a => a.Id == ArticleEdited.Id)
-                .Single();
+           Article ArticleFromDb = context.Articles.Single(a => a.Id == ArticleEdited.Id);
             ArticleFromDb.Headline = ArticleEdited.Headline;
-            ArticleFromDb.PictureLink = ArticleEdited.PictureLink;
+            ArticleFromDb.PictureName = ArticleEdited.PictureName;
             ArticleFromDb.ShortDescription = ArticleEdited.ShortDescription;
             ArticleFromDb.Text = ArticleEdited.Text;
             ArticleFromDb.CategoryId = ArticleEdited.CategoryId;
             context.SaveChanges();
-            return RedirectToAction("Show", "Articles", new { ArticleId = ArticleEdited.Id }); ;
+            return RedirectToAction("Show", "Articles", new { ArticleId = ArticleEdited.Id });
         }
     }
 }
