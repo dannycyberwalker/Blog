@@ -31,7 +31,7 @@ namespace Blog
                 options.Password.RequireDigit = false; 
             }).AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddTransient<ChartViewModelGenerator>();
-            services.AddTransient<IImageSaver, ImageSaver>();
+            services.AddTransient<IBytesImageService, BytesImageService>();
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {

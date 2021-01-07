@@ -3,7 +3,7 @@
     ViewBag.Title = "Редактирование пользователя";
 }
 <div class="col">
-    <form asp-action="Edit" asp-controller="Users">
+    <form asp-action="Edit" asp-controller="Users" enctype="multipart/form-data">
         <div asp-validation-summary="All" class="text-danger"></div>
         <div class="form-group">
             <input type="hidden" asp-for="Id" />
@@ -31,7 +31,29 @@
         <div class="form-group">
             <label asp-for="CreateAccountTime" class="control-label">Дата и время создания аккаунта</label>
             <input type="datetime" asp-for="CreateAccountTime" class="form-control" />
-        </div><br />
+        </div>
+        <div class="form-group">
+            <label asp-for="Avatar" class="control-label"></label>
+            <input type="file" asp-for="Avatar" class="form-control" />
+        </div>
+        <div>
+            <div>Текущее фото</div>
+            @if (ViewBag.Avatar != null)
+            {
+                <div>
+                    <img src="data:image/jpeg;base64,@(Convert.ToBase64String(ViewBag.Avatar))"
+                         alt="Image"
+                         height="60"
+                         width="60"
+                         class="mb-2 rounded-circle img-thumbnail">
+                </div>
+            }
+            else
+            {
+                <text>Отсутсвует</text>
+            }
+        </div>
+        <br />
         <div class="form-group">
             <input type="submit" value="Сохранить" class="btn btn-outline-secondary" />
         </div>

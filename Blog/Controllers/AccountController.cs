@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Blog.Models;
 using System.Threading.Tasks;
 using Blog.Models.ViewModels;
+using Blog.Services;
 using Microsoft.AspNetCore.Identity;
 
 namespace Blog.Controllers
@@ -12,11 +13,13 @@ namespace Blog.Controllers
 
         private readonly UserManager<User> userManager;
         private readonly SignInManager<User> signInManager;
-
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        private readonly IBytesImageService imageService;
+        public AccountController(UserManager<User> userManager, 
+            SignInManager<User> signInManager, IBytesImageService imageService )
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
+            this.imageService = imageService;
         }
         [HttpGet]
         public IActionResult Register() => View();
@@ -26,14 +29,7 @@ namespace Blog.Controllers
         {
             if (ModelState.IsValid)
             {
-                byte[] imageData = null;
-                if (model.Avatar != null)
-                {
-                    using (var binaryReader = new BinaryReader(model.Avatar.OpenReadStream()))
-                    {
-                        imageData = binaryReader.ReadBytes((int)model.Avatar.Length);
-                    }
-                }
+                
                 User user = new User 
                 {
                     Email = model.Email, 
@@ -41,7 +37,7 @@ namespace Blog.Controllers
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     NickName = model.NickName,
-                    Avatar =  imageData
+                    Avatar =  imageService.GetBytesFrom(model.Avatar)
                 };
                 var result = await userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)

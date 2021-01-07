@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
+using Blog.Services;
 
 namespace Blog.Controllers
 {
@@ -14,11 +15,13 @@ namespace Blog.Controllers
     [Authorize(Roles ="admin")]
     public class UsersController : Controller
     {
-        readonly UserManager<User> userManager;
+        private readonly UserManager<User> userManager;
+        private readonly IBytesImageService imageService;
 
-        public UsersController(UserManager<User> userManager)
+        public UsersController(UserManager<User> userManager, IBytesImageService imageService)
         {
             this.userManager = userManager;
+            this.imageService = imageService;
         }
         [HttpGet]
         public IActionResult Index() => View(userManager.Users.ToList());
@@ -37,7 +40,8 @@ namespace Blog.Controllers
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     NickName = model.NickName,
-                    CreateAccountTime = model.CreateAccountTime
+                    CreateAccountTime = model.CreateAccountTime,
+                    Avatar =  imageService.GetBytesFrom(model.Avatar)
                 };
                 var result = await userManager.CreateAsync(user, model.Password);
 
@@ -54,10 +58,10 @@ namespace Blog.Controllers
         public async Task<IActionResult> Edit(string id)
         {
             User user = await userManager.FindByIdAsync(id);
-
+            
             if (user == null)
                 return NotFound();
-
+            ViewBag.Avatar = user.Avatar;
             EditUserViewModel model = new EditUserViewModel 
             { 
                 Id = user.Id, 
@@ -84,6 +88,9 @@ namespace Blog.Controllers
                     user.LastName = model.LastName;
                     user.NickName = model.NickName;
                     user.CreateAccountTime = model.CreateAccountTime;
+
+                    if (model.Avatar != null)
+                        user.Avatar = imageService.GetBytesFrom(model.Avatar);
 
                     var result = await userManager.UpdateAsync(user);
 

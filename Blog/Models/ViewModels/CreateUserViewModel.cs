@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace Blog.Models.ViewModels
 {
@@ -28,5 +29,6 @@ namespace Blog.Models.ViewModels
         [Display(Name = "Пароль")]
         public string Password { get; set; }
         public System.DateTime CreateAccountTime { get; set; }
+        public IFormFile Avatar { get; set; }
     }
 }

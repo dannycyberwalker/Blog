@@ -3,7 +3,7 @@
     ViewBag.Title = "Добавление пользователя";
 }
 <div class="col">
-    <form asp-action="Create" asp-controller="Users">
+    <form asp-action="Create" asp-controller="Users" enctype="multipart/form-data">
         <div asp-validation-summary="All" class="text-danger"></div>
         <div class="form-group">
             <label asp-for="Email" class="control-label">Email</label>
@@ -28,7 +28,12 @@
         <div class="form-group">
             <label asp-for="CreateAccountTime" class="control-label">Дата и время создания аккаунта</label>
             <input type="datetime" asp-for="CreateAccountTime" class="form-control" />
-        </div><br />
+        </div>
+        <div class="form-group">
+            <label asp-for="Avatar" class="control-label"></label>
+            <input type="file" asp-for="Avatar" class="form-control" />
+        </div>
+        <br />
         <div class="form-group">
             <input type="submit" value="Добавить" class="btn btn-outline-secondary" />
         </div>
