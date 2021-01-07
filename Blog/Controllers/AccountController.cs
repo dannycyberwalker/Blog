@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Blog.Models;
 using System.Threading.Tasks;
 using Blog.Models.ViewModels;
@@ -84,6 +83,6 @@ namespace Blog.Controllers
             await signInManager.SignOutAsync();
             return RedirectToAction("Index", "Articles");
         }
-
+        
     }
 }

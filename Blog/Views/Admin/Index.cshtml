@@ -1,5 +1,4 @@
-﻿@model IEnumerable<ChartViewModel<string>>
-<div class="row">
+﻿<div class="row">
     <nav class="nav">
         <a class="nav-link"
            asp-action="Index"
@@ -14,18 +13,17 @@
            asp-action="Index"
            asp-controller="Categories">Категории</a>
     </nav>
-
 </div>
-<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
-<script src="~/js/Chart.js"></script>
 <div class="row">
-    <div class="col">
-        @foreach (var chart in Model)
-        {
-            <plotly-chart title="@(chart.Title)"
-                          x-values="@(chart.XValues)"
-                          y-values="@(chart.YValues)"></plotly-chart>
-        }
+    <div class="col-sm" id="charts-container">
+        <!--Include scripts-->
+        <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+        <script src="~/js/chart.js"></script>
+        
+        <button class="btn btn-primary remove-after-click"
+                onclick="showStatistics('charts-container')">
+            Загрузить статистику
+        </button>
     </div>
 </div>
 

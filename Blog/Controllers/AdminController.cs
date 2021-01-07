@@ -23,30 +23,34 @@ namespace Blog.Controllers
             this.dataGenerator = dataGenerator;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public IActionResult Index() => View();
+        
+        [HttpGet]
+        public JsonResult GetStatistics()
         {
             List<ChartViewModel<string>> chartsViewModel = new List<ChartViewModel<string>>
             {
-               dataGenerator.Generate(
-                        context.Comments
+                dataGenerator.Generate(
+                    context.Comments
                         .Where(c => c.CreateTime.AddDays(30) > DateTime.Now)
                         .Select(d => d.CreateTime)
                         .ToList(),
-                        DateTime.Now.AddDays(-30), DateTime.Now, 3, "Comments"),
-               dataGenerator.Generate(
-                        context.Users
+                    DateTime.Now.AddDays(-30), DateTime.Now, 3, "Comments"),
+                dataGenerator.Generate(
+                    context.Users
                         .Where(c => c.CreateAccountTime.AddDays(30) > DateTime.Now)
                         .Select(d => d.CreateAccountTime)
                         .ToList(),
-                        DateTime.Now.AddDays(-30), DateTime.Now, 3, "Users"),
-               dataGenerator.Generate(
-                        context.Articles
+                    DateTime.Now.AddDays(-30), DateTime.Now, 3, "Users"),
+                dataGenerator.Generate(
+                    context.Articles
                         .Where(c => c.CreateTime.AddDays(30) > DateTime.Now)
                         .Select(d => d.CreateTime)
                         .ToList(),
-                        DateTime.Now.AddDays(-30), DateTime.Now, 3, "Articles")
+                    DateTime.Now.AddDays(-30), DateTime.Now, 3, "Articles")
             };
-            return View(chartsViewModel);
+            return Json(chartsViewModel);
         }
     }
 }
