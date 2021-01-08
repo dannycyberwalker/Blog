@@ -2,6 +2,7 @@
 using Blog.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Blog.Services;
@@ -26,31 +27,58 @@ namespace Blog.Controllers
         [HttpGet]
         public IActionResult Index() => View();
         
+        /// <param name="from">Date in string representation</param>
+        /// <param name="to">Date in string representation</param>
+        /// <returns>View model for plotly chart</returns>
         [HttpGet]
-        public JsonResult GetStatistics()
+        public JsonResult GetStatistics(string tableName,string from, string to , int daysInOneStep)
         {
-            List<ChartViewModel<string>> chartsViewModel = new List<ChartViewModel<string>>
+            Dictionary<string, IQueryable<ICreateTime>> tables = new()
             {
-                dataGenerator.Generate(
-                    context.Comments
-                        .Where(c => c.CreateTime.AddDays(30) > DateTime.Now)
-                        .Select(d => d.CreateTime)
-                        .ToList(),
-                    DateTime.Now.AddDays(-30), DateTime.Now, 3, "Comments"),
-                dataGenerator.Generate(
-                    context.Users
-                        .Where(c => c.CreateAccountTime.AddDays(30) > DateTime.Now)
-                        .Select(d => d.CreateAccountTime)
-                        .ToList(),
-                    DateTime.Now.AddDays(-30), DateTime.Now, 3, "Users"),
-                dataGenerator.Generate(
-                    context.Articles
-                        .Where(c => c.CreateTime.AddDays(30) > DateTime.Now)
-                        .Select(d => d.CreateTime)
-                        .ToList(),
-                    DateTime.Now.AddDays(-30), DateTime.Now, 3, "Articles")
+                {"Comments", context.Comments},
+                {"Articles", context.Articles},
+                {"Users", context.Users}
             };
-            return Json(chartsViewModel);
+            ChartViewModel<string> response;
+            DateTime From;
+            DateTime To;
+            
+            //Validating request value. 
+            if (!(DateTime.TryParse(from, out From) && DateTime.TryParse(to, out To)))
+            {
+                From = DateTime.Now.AddDays(-30);
+                To = DateTime.Now;
+            }
+            //366 because you cannot request statistics that are more than a year old.
+            if (From.AddDays(366) < To)
+            {
+                From = DateTime.Now.AddDays(-30);
+                To = DateTime.Now;
+            }
+            if (daysInOneStep < 1 || From.AddDays(daysInOneStep) >= To)
+            {
+                daysInOneStep = 1;
+            }
+            
+            
+            if (tables.ContainsKey(tableName))
+            {
+                IEnumerable<DateTime> dates = tables[tableName]
+                    .Select(d => d.CreateTime)
+                    .Where(c => c.AddDays(To.Subtract(From).Days) > To);
+                
+                response = dataGenerator.Generate(dates, From, To, daysInOneStep, tableName);
+            }
+            else
+            {
+                response = new ChartViewModel<string>()
+                {
+                    Title = "anyString",
+                    XValues = new List<string>(),
+                    YValues = new List<int>()
+                };
+            }
+            return Json(response);
         }
     }
 }

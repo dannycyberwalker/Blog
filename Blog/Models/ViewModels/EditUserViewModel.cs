@@ -25,6 +25,6 @@ namespace Blog.Models.ViewModels
         [StringLength(100, ErrorMessage = "Поле {0} должно иметь минимум {2} и максимум {1} символов.", MinimumLength = 5)]
         public string NickName { get; set; }
         public IFormFile Avatar { get; set; }
-        public System.DateTime CreateAccountTime { get; set; }
+        public System.DateTime CreateTime { get; set; }
     }
 }

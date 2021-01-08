@@ -21,18 +21,30 @@ namespace Blog.Controllers
             this.context = context;
             this.userManager = userManager;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name">This is string for search an article by author. </param>
+        /// <param name="categoryId">
+        /// With the default value of the parameter, all articles will be selected.
+        /// It must match the value in comparison "categoryId != 2".
+        /// </param>
+        /// <param name="page"></param>
+        /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> Index(string name, int categoryId = 1 ,int page = 1,
+        public async Task<IActionResult> Index(string name, int categoryId = 2 ,int page = 1,
             SortState sortOrder = SortState.DateDesc)
         {
+            //getting data
             IQueryable<Article> articles = context.Articles
                 .Include(a => a.Author)
                 .Include(c => c.Comments)
                 .OrderBy(a => a.Id);
-
+            
+            //filtering
             if (!string.IsNullOrEmpty(name))
                 articles = articles.Where(p => p.Author.NickName.Contains(name));
-            else if (categoryId != 1)
+            else if (categoryId != 2)
                 articles = articles.Where(c => c.CategoryId == categoryId);
             else
             {
@@ -57,13 +69,14 @@ namespace Blog.Controllers
             var countArticles = await articles.CountAsync();
             var itemsPerPage =
                 await articles.Skip((page - 1) * PageSize).Take(PageSize).ToListAsync();
-
+            FilterViewModel fvm = new FilterViewModel(name,
+                context.Categories.Single(c => c.Id == categoryId));
+            
             return View(new ArticlesIndexViewModel 
             {
                 PageViewModel = new PageViewModel(countArticles, page, PageSize),
                 SortViewModel = new SortViewModel(sortOrder),
-                FilterViewModel = new FilterViewModel(name, 
-                    context.Categories.Single(c => c.Id == categoryId)),
+                FilterViewModel = fvm,
                 Categories = context.Categories.ToList(),
                 Articles = itemsPerPage
             });

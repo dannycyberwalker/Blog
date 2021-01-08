@@ -10,7 +10,7 @@ namespace Blog.Services
     {
 
         public ChartViewModel<string> Generate(IEnumerable<DateTime> DatesOfCreation, DateTime From, 
-            DateTime To, int StepOfDays, string Title)
+            DateTime To, int daysInOneStep, string Title)
         {
             ChartViewModel<string> model = new ChartViewModel<string>() {Title = Title };          
             if(From >= To) 
@@ -18,9 +18,9 @@ namespace Blog.Services
                 throw new ArgumentException("Parametr From more To"); 
             }
 
-            for (DateTime i = From; i < To; i = i.AddDays(StepOfDays))
+            for (DateTime i = From; i < To; i = i.AddDays(daysInOneStep))
             {
-                int commentsCount = DatesOfCreation.Count(d => d > i && d < i.AddDays(StepOfDays));
+                int commentsCount = DatesOfCreation.Count(d => d > i && d < i.AddDays(daysInOneStep));
                 model.XValues.Add(i.ToString("d") + "-" + i.AddDays(1).ToString("d"));
                 model.YValues.Add(commentsCount);
             }

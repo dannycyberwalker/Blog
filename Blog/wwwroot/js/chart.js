@@ -24,8 +24,10 @@
     //Title in this method call is the id of div where chart renders.
     Plotly.newPlot(Title, data, layout);
 }
-async function getStatstics() {
-    let response = await fetch('https://localhost:5001/Admin/GetStatistics');
+//Controller signature: GetStatistics(string tableName,string from, string to , int daysInOneStep)
+async function getStatstics(tableName, from, to, daysInOneStep) {
+    let requestUrl = `https://localhost:5001/Admin/GetStatistics?tableName=${tableName}&from=${from}&to=${to}&daysInOneStep=${daysInOneStep}`;
+    let response = await fetch(requestUrl);
     let data;
     if (response.ok) {
         data = await response.json();
@@ -36,24 +38,28 @@ async function getStatstics() {
     }
     return data;
 }
-async function showStatistics(elementId) {
-    let element = document.getElementById(elementId);
-    let data = await getStatstics();
+async function showStatistics(outputElementId, classNameRemoveElement, tableName, fromId, toId, daysInOneStepId) {
+    let from = document.getElementById(fromId).value;
+    let to = document.getElementById(toId).value;
+    let daysInOneStep = document.getElementById(daysInOneStepId).value;
+    let outputElement = document.getElementById(outputElementId);
+    
+    let data = await getStatstics(tableName, from, to, daysInOneStep);
+    
     if(data !== undefined){
-        for(let i = 0; i < data.length;i++){
-            let chartElement =  document.createElement('div');
-            chartElement.setAttribute('id', data[i].title);
-            element.appendChild(chartElement);
-            let title = data[i].title;
-            let xValues = data[i].xValues;
-            let yValues = data[i].yValues;
-            DrawChart(title, xValues, yValues);
-        }
+       let chartElement =  document.createElement('div');
+       chartElement.setAttribute('id', data.title);
+       outputElement.appendChild(chartElement);
+       let title = data.title;
+       let xValues = data.xValues;
+       let yValues = data.yValues;
+       DrawChart(title, xValues, yValues);
+
     }
-    removeAfterClick();
+    removeAfterClick(classNameRemoveElement);
 }
-function removeAfterClick() {
-    let elements = document.getElementsByClassName('remove-after-click');
+function removeAfterClick(className) {
+    let elements = document.getElementsByClassName(className);
     for (let i = 0; i < elements.length; i ++){
         elements[i].remove();
     }

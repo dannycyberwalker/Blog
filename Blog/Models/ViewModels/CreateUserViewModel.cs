@@ -28,7 +28,7 @@ namespace Blog.Models.ViewModels
         [DataType(DataType.Password)]
         [Display(Name = "Пароль")]
         public string Password { get; set; }
-        public System.DateTime CreateAccountTime { get; set; }
+        public System.DateTime CreateTime { get; set; }
         public IFormFile Avatar { get; set; }
     }
 }

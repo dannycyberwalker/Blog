@@ -1,9 +1,11 @@
 ﻿using Blog.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Blog.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class CategoriesController : Controller
     {
         private ApplicationDbContext context;

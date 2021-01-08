@@ -40,7 +40,7 @@ namespace Blog.Controllers
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     NickName = model.NickName,
-                    CreateAccountTime = model.CreateAccountTime,
+                    CreateTime = model.CreateTime,
                     Avatar =  imageService.GetBytesFrom(model.Avatar)
                 };
                 var result = await userManager.CreateAsync(user, model.Password);
@@ -69,7 +69,7 @@ namespace Blog.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 NickName = user.NickName,
-                CreateAccountTime = user.CreateAccountTime
+                CreateTime = user.CreateTime
             };
             return View(model);
         }
@@ -87,7 +87,7 @@ namespace Blog.Controllers
                     user.FirstName = model.FirstName;
                     user.LastName = model.LastName;
                     user.NickName = model.NickName;
-                    user.CreateAccountTime = model.CreateAccountTime;
+                    user.CreateTime = model.CreateTime;
 
                     if (model.Avatar != null)
                         user.Avatar = imageService.GetBytesFrom(model.Avatar);

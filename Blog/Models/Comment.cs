@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Blog.Models
 {
-    public class Comment
+    public class Comment : ICreateTime
     {
         public int Id { get; set; }
         [Required(ErrorMessage = "Не коректная информация")]

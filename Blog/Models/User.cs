@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Blog.Models
 {
-    public class User : IdentityUser
+    public class User : IdentityUser, ICreateTime
     {
 
         [Display(Name = "Имя")]
@@ -26,10 +26,10 @@ namespace Blog.Models
         public byte[] Avatar { get; set; }
 
         public List<Article> Articles { get; set; }
-        public DateTime CreateAccountTime { get; set; }
+        public DateTime CreateTime { get; set; }
         public User()
         {
-            CreateAccountTime = DateTime.Now;
+            CreateTime = DateTime.Now;
         }
     }
 }

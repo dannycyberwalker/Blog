@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Blog.Models
 {
-    public class Article
+    public class Article : ICreateTime
     {
         public int Id { get; set; }
         [Display(Name = "Заголовок")]

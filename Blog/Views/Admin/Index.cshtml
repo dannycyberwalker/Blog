@@ -15,15 +15,70 @@
     </nav>
 </div>
 <div class="row">
-    <div class="col-sm" id="charts-container">
+    <div class="col-sm">
         <!--Include scripts-->
         <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
         <script src="~/js/chart.js"></script>
         
-        <button class="btn btn-primary remove-after-click"
-                onclick="showStatistics('charts-container')">
-            Загрузить статистику
-        </button>
+        <div id="comments-charts-container">
+            <div class="form-group remove-comments-element">
+                <label>C</label>
+                <input class="form-control" type="date" id="commentsDateFrom">
+                <label>По</label>
+                <input class="form-control" type="date" id="commentsDateTo">
+                <label>Количество дней в одном столбце:</label>
+                <input class="form-control" type="number" id="daysInOneStepComments">
+                <button class="btn btn-primary remove-after-click"
+                        onclick="showStatistics('comments-charts-container', 
+                                                'remove-comments-element',
+                                                'Comments',
+                                                'commentsDateFrom', 
+                                                'commentsDateTo', 
+                                                'daysInOneStepComments')">
+                    Загрузить статистику по комментариям
+                </button>
+            </div>
+        </div>
+        
+        <div id="articles-charts-container">
+            <div class="form-group remove-articles-element">
+                <label>C</label>
+                <input class="form-control" type="date" id="articlesDateFrom">
+                <label>По</label>
+                <input class="form-control" type="date" id="articlesDateTo">
+                <label>Количество дней в одном столбце:</label>
+                <input class="form-control" type="number" id="daysInOneStepArticles">
+                <button class="btn btn-primary remove-after-click"
+                        onclick="showStatistics('articles-charts-container', 
+                                                'remove-articles-element',
+                                                'Articles',
+                                                'articlesDateFrom', 
+                                                'articlesDateTo', 
+                                                'daysInOneStepArticles')">
+                        Загрузить статистику по статьям
+                </button>
+            </div>
+        </div>
+        
+        <div id="users-charts-container">
+            <div class="form-group remove-users-element">
+                <label>C</label>
+                <input class="form-control" type="date" id="usersDateFrom">
+                <label>По</label>
+                <input class="form-control" type="date" id="usersDateTo">
+                <label>Количество дней в одном столбце:</label>
+                <input class="form-control" type="number" id="daysInOneStepUsers">
+                <button class="btn btn-primary remove-after-click"
+                        onclick="showStatistics('users-charts-container', 
+                                                'remove-users-element',
+                                                'Users',
+                                                'usersDateFrom', 
+                                                'usersDateTo', 
+                                                'daysInOneStepUsers')">
+                        Загрузить статистику по зарегистрированным пользователям
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
