@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Blog.Attributes;
 using Microsoft.AspNetCore.Http;
 
 
@@ -36,6 +37,7 @@ namespace Blog.Models.ViewModels
         [Display(Name = "Подтвердить пароль")]
         public string PasswordConfirm { get; set; }
         [Required]
+        [PictureWeight(5 * 1024 * 1024)]//5 MB
         [Display(Name = "Фото профиля")]
         public IFormFile Avatar { get; set; }
     }

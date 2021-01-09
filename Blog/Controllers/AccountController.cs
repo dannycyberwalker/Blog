@@ -65,9 +65,7 @@ namespace Blog.Controllers
                 if (result.Succeeded)
                 {
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                    {
                         return Redirect(model.ReturnUrl);
-                    }
                     else
                         return RedirectToAction("Index", "Articles");
                 }

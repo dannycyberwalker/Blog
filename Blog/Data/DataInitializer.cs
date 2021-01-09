@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Blog.Models
 {
-    public class RoleInitializer
+    public class DataInitializer
     {
         public static async Task InitializeAsync(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
