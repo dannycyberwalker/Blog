@@ -8,10 +8,10 @@
         textposition: 'auto',
         hoverinfo: 'none',
         marker: {
-            color: 'rgb(0,0,0)',
+            color: 'rgb(252,255,7)',
             opacity: 0.8,
             line: {
-                color: 'rgb(0,0,0)',
+                color: 'rgb(246,0,43)',
                 width: 1.5
             }
         }

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
-using Blog.Services;
+using Blog.Services.Interfaces;
 
 namespace Blog.Controllers
 {
@@ -16,9 +16,9 @@ namespace Blog.Controllers
     public class UsersController : Controller
     {
         private readonly UserManager<User> userManager;
-        private readonly IBytesImageService imageService;
+        private readonly IImageService imageService;
 
-        public UsersController(UserManager<User> userManager, IBytesImageService imageService)
+        public UsersController(UserManager<User> userManager, IImageService imageService)
         {
             this.userManager = userManager;
             this.imageService = imageService;
@@ -33,6 +33,10 @@ namespace Blog.Controllers
         {
             if (ModelState.IsValid)
             {
+                byte[] avatar = null;
+                if (imageService.IsImage(model.Avatar))
+                    avatar = imageService.GetBytesFrom(model.Avatar);
+                    
                 User user = new User
                 {
                     Email = model.Email,
@@ -41,7 +45,7 @@ namespace Blog.Controllers
                     LastName = model.LastName,
                     NickName = model.NickName,
                     CreateTime = model.CreateTime,
-                    Avatar =  imageService.GetBytesFrom(model.Avatar)
+                    Avatar =   avatar
                 };
                 var result = await userManager.CreateAsync(user, model.Password);
 
@@ -82,6 +86,7 @@ namespace Blog.Controllers
                 User user = await userManager.FindByIdAsync(model.Id);
                 if (user != null)
                 {
+                    
                     user.Email = model.Email;
                     user.UserName = model.Email;
                     user.FirstName = model.FirstName;
@@ -89,7 +94,8 @@ namespace Blog.Controllers
                     user.NickName = model.NickName;
                     user.CreateTime = model.CreateTime;
 
-                    if (model.Avatar != null)
+                    
+                    if (model.Avatar != null && imageService.IsImage(model.Avatar))
                         user.Avatar = imageService.GetBytesFrom(model.Avatar);
 
                     var result = await userManager.UpdateAsync(user);

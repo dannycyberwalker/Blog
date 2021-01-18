@@ -40,11 +40,9 @@ namespace Blog.Controllers
                 {"Users", context.Users}
             };
             ChartViewModel<string> response;
-            DateTime From;
-            DateTime To;
-            
+
             //Validating request value. 
-            if (!(DateTime.TryParse(from, out From) && DateTime.TryParse(to, out To)))
+            if (!(DateTime.TryParse(from, out var From) && DateTime.TryParse(to, out var To)))
             {
                 From = DateTime.Now.AddDays(-30);
                 To = DateTime.Now;

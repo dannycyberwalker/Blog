@@ -2,7 +2,8 @@
 using Blog.Models;
 using System.Threading.Tasks;
 using Blog.Models.ViewModels;
-using Blog.Services;
+using Blog.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
 namespace Blog.Controllers
@@ -12,9 +13,9 @@ namespace Blog.Controllers
 
         private readonly UserManager<User> userManager;
         private readonly SignInManager<User> signInManager;
-        private readonly IBytesImageService imageService;
+        private readonly IImageService imageService;
         public AccountController(UserManager<User> userManager, 
-            SignInManager<User> signInManager, IBytesImageService imageService )
+            SignInManager<User> signInManager, IImageService imageService )
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -36,7 +37,7 @@ namespace Blog.Controllers
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     NickName = model.NickName,
-                    Avatar =  imageService.GetBytesFrom(model.Avatar)
+                    Avatar = imageService.IsImage(model.Avatar) ? imageService.GetBytesFrom(model.Avatar) : null
                 };
                 var result = await userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
@@ -74,7 +75,7 @@ namespace Blog.Controllers
             }
             return View(model);
         }
-
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Logout()
         {

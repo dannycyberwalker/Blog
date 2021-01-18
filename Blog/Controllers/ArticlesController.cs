@@ -36,10 +36,12 @@ namespace Blog.Controllers
             SortState sortOrder = SortState.DateDesc)
         {
             //getting data
-            IQueryable<Article> articles = context.Articles
+            var articles = context.Articles
                 .Include(a => a.Author)
                 .Include(c => c.Comments)
-                .OrderBy(a => a.Id);
+                .OrderBy(a => a.Id)
+                .Skip((page - 1) * PageSize)
+                .Take(PageSize);
             
             //filtering
             if (!string.IsNullOrEmpty(name))
@@ -67,10 +69,9 @@ namespace Blog.Controllers
             
 
             var countArticles = await articles.CountAsync();
-            var itemsPerPage =
-                await articles.Skip((page - 1) * PageSize).Take(PageSize).ToListAsync();
+            
             FilterViewModel fvm = new FilterViewModel(name,
-                context.Categories.Single(c => c.Id == categoryId));
+                await (context.Categories).SingleAsync(c => c.Id == categoryId));
             
             return View(new ArticlesIndexViewModel 
             {
@@ -78,7 +79,7 @@ namespace Blog.Controllers
                 SortViewModel = new SortViewModel(sortOrder),
                 FilterViewModel = fvm,
                 Categories = context.Categories.ToList(),
-                Articles = itemsPerPage
+                Articles = articles.ToList()
             });
         }
 
@@ -97,7 +98,7 @@ namespace Blog.Controllers
             if (ModelState.IsValid)
             {
                 article.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                context.Articles.Add(article);
+                await context.Articles.AddAsync(article);
                 await context.SaveChangesAsync();
                 return RedirectToAction("Show", "Articles", new { ArticleId = article.Id });
             }
@@ -125,13 +126,13 @@ namespace Blog.Controllers
         public async Task<IActionResult> Show(string CommentText, int ArticleId)
         {
             User CurrentUser = await userManager.GetUserAsync(User); 
-            context.Comments.Add(new Comment
+            await context.Comments.AddAsync(new Comment
             {
                 Text = CommentText,
                 Author = CurrentUser,
                 ArticleId = ArticleId
             });
-            context.SaveChanges();
+            await context.SaveChangesAsync();
             return RedirectToAction("Show", "Articles", new { ArticleId = ArticleId });
         }
 
@@ -146,8 +147,7 @@ namespace Blog.Controllers
                 ViewBag.Categories = new SelectList(context.Categories, "Id", "Name");
                 return View(article);
             }
-            else
-                return NotFound();
+            return NotFound();
         }
 
         [Authorize]
