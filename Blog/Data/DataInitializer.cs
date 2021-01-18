@@ -8,6 +8,7 @@ namespace Blog.Models
         public static async Task InitializeAsync(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
             string adminEmail = "admin@gmail.com";
+            string userEmail = "user@gmail.com";
             string password = "_Aa123456";
             if (await roleManager.FindByNameAsync("admin") == null)
             {
@@ -25,11 +26,20 @@ namespace Blog.Models
                     NickName = "admin",
                     
                 };
-                IdentityResult result = await userManager.CreateAsync(admin, password);
-                if (result.Succeeded)
+                User user = new User
                 {
+                    Email = userEmail,
+                    UserName = userEmail,
+                    FirstName = "user",
+                    LastName = "user",
+                    NickName = "user",
+                    
+                };
+                IdentityResult userResult = await userManager.CreateAsync(user, password);
+                IdentityResult adminResult = await userManager.CreateAsync(admin, password);
+                if (adminResult.Succeeded)
                     await userManager.AddToRoleAsync(admin, "admin");
-                }
+                
             }
         }
     }

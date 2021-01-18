@@ -1,5 +1,6 @@
 using Blog.Models;
 using Blog.Services;
+using Blog.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -20,8 +21,10 @@ namespace Blog
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc(option => option.EnableEndpointRouting = false);
+            
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            
             services.AddIdentity<User, IdentityRole>(options => 
             {
                 options.Password.RequiredLength = 8;  
@@ -30,8 +33,9 @@ namespace Blog
                 options.Password.RequireUppercase = false; 
                 options.Password.RequireDigit = false; 
             }).AddEntityFrameworkStores<ApplicationDbContext>();
+            
             services.AddTransient<ChartViewModelGenerator>();
-            services.AddTransient<IBytesImageService, BytesImageService>();
+            services.AddTransient<IImageService, ImageService>();
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {

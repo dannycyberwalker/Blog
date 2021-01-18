@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Blog.Models;
 using Microsoft.AspNetCore.Hosting;
@@ -20,9 +21,14 @@ namespace Blog
                 var services = scope.ServiceProvider;
                 try
                 {
+                    var context = services.GetRequiredService<ApplicationDbContext>();
+                    if (!context.Categories.Any())
+                        context.Categories.Add(new() {Name = "None"});
+                    
                     var userManager = services.GetRequiredService<UserManager<User>>();
                     var rolesManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-                    await DataInitializer.InitializeAsync(userManager, rolesManager);
+                    if(!userManager.Users.Any())
+                        await DataInitializer.InitializeAsync(userManager, rolesManager);
                 }
                 catch (Exception ex)
                 {

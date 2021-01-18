@@ -2,7 +2,8 @@
 using Blog.Models;
 using System.Threading.Tasks;
 using Blog.Models.ViewModels;
-using Blog.Services;
+using Blog.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
 namespace Blog.Controllers
@@ -10,15 +11,15 @@ namespace Blog.Controllers
     public class AccountController : Controller
     {
 
-        private readonly UserManager<User> userManager;
-        private readonly SignInManager<User> signInManager;
-        private readonly IBytesImageService imageService;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
+        private readonly IImageService _imageService;
         public AccountController(UserManager<User> userManager, 
-            SignInManager<User> signInManager, IBytesImageService imageService )
+            SignInManager<User> signInManager, IImageService imageService )
         {
-            this.userManager = userManager;
-            this.signInManager = signInManager;
-            this.imageService = imageService;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _imageService = imageService;
         }
         [HttpGet]
         public IActionResult Register() => View();
@@ -36,12 +37,12 @@ namespace Blog.Controllers
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     NickName = model.NickName,
-                    Avatar =  imageService.GetBytesFrom(model.Avatar)
+                    Avatar = _imageService.IsImage(model.Avatar) ? _imageService.GetBytesFrom(model.Avatar) : null
                 };
-                var result = await userManager.CreateAsync(user, model.Password);
+                var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await signInManager.SignInAsync(user, false);
+                    await _signInManager.SignInAsync(user, false);
                     return RedirectToAction("Index", "Articles");
                 }
                 else
@@ -61,7 +62,7 @@ namespace Blog.Controllers
             if (ModelState.IsValid)
             {
                 var result =
-                    await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                    await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
@@ -74,11 +75,11 @@ namespace Blog.Controllers
             }
             return View(model);
         }
-
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
-            await signInManager.SignOutAsync();
+            await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Articles");
         }
         

@@ -13,13 +13,13 @@ namespace Blog.Controllers
 {
     public class ArticlesController : Controller
     {
-        readonly private int PageSize = 4;
-        readonly private ApplicationDbContext context;
-        readonly private UserManager<User> userManager;
+        private readonly int PageSize = 4;
+        private readonly ApplicationDbContext _context;
+        private readonly UserManager<User> _userManager;
         public ArticlesController(ApplicationDbContext context, UserManager<User> userManager)
         {
-            this.context = context;
-            this.userManager = userManager;
+            _context = context;
+            _userManager = userManager;
         }
         /// <summary>
         /// 
@@ -27,24 +27,26 @@ namespace Blog.Controllers
         /// <param name="name">This is string for search an article by author. </param>
         /// <param name="categoryId">
         /// With the default value of the parameter, all articles will be selected.
-        /// It must match the value in comparison "categoryId != 2".
+        /// It must match the value in comparison "categoryId != 1".
         /// </param>
         /// <param name="page"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> Index(string name, int categoryId = 2 ,int page = 1,
+        public async Task<IActionResult> Index(string name, int categoryId = 1 ,int page = 1,
             SortState sortOrder = SortState.DateDesc)
         {
             //getting data
-            IQueryable<Article> articles = context.Articles
+            var articles = _context.Articles
                 .Include(a => a.Author)
                 .Include(c => c.Comments)
-                .OrderBy(a => a.Id);
+                .OrderBy(a => a.Id)
+                .Skip((page - 1) * PageSize)
+                .Take(PageSize);
             
             //filtering
             if (!string.IsNullOrEmpty(name))
                 articles = articles.Where(p => p.Author.NickName.Contains(name));
-            else if (categoryId != 2)
+            else if (categoryId != 1)
                 articles = articles.Where(c => c.CategoryId == categoryId);
             else
             {
@@ -66,19 +68,18 @@ namespace Blog.Controllers
             }
             
 
-            var countArticles = await articles.CountAsync();
-            var itemsPerPage =
-                await articles.Skip((page - 1) * PageSize).Take(PageSize).ToListAsync();
+            var countArticles = await _context.Articles.CountAsync();
+            
             FilterViewModel fvm = new FilterViewModel(name,
-                context.Categories.Single(c => c.Id == categoryId));
+                await _context.Categories.SingleAsync(c => c.Id == categoryId));
             
             return View(new ArticlesIndexViewModel 
             {
                 PageViewModel = new PageViewModel(countArticles, page, PageSize),
                 SortViewModel = new SortViewModel(sortOrder),
                 FilterViewModel = fvm,
-                Categories = context.Categories.ToList(),
-                Articles = itemsPerPage
+                Categories = _context.Categories.ToList(),
+                Articles = articles.ToList()
             });
         }
 
@@ -86,7 +87,7 @@ namespace Blog.Controllers
         [HttpGet]
         public IActionResult Create() 
         {
-            ViewBag.Categories = new SelectList(context.Categories, "Id", "Name");
+            ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name");
             return View();
         }
 
@@ -97,22 +98,22 @@ namespace Blog.Controllers
             if (ModelState.IsValid)
             {
                 article.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                context.Articles.Add(article);
-                await context.SaveChangesAsync();
+                await _context.Articles.AddAsync(article);
+                await _context.SaveChangesAsync();
                 return RedirectToAction("Show", "Articles", new { ArticleId = article.Id });
             }
             return View(article);
         }
 
         [HttpGet]
-        public async  Task<ActionResult> Show(int ArticleId)
+        public async  Task<ActionResult> Show(int articleId)
         {
             Article currentArticle = await 
-                context.Articles
+                _context.Articles
                 .Include(c => c.Category)
                 .Include(c => c.Comments)
                     .ThenInclude(a => a.Author)
-                .Where(a => a.Id == ArticleId)
+                .Where(a => a.Id == articleId)
                 .SingleAsync();
             return View(currentArticle);
         }
@@ -122,46 +123,45 @@ namespace Blog.Controllers
         /// </summary>
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Show(string CommentText, int ArticleId)
+        public async Task<IActionResult> Show(string commentText, int articleId)
         {
-            User CurrentUser = await userManager.GetUserAsync(User); 
-            context.Comments.Add(new Comment
+            User currentUser = await _userManager.GetUserAsync(User); 
+            await _context.Comments.AddAsync(new Comment
             {
-                Text = CommentText,
-                Author = CurrentUser,
-                ArticleId = ArticleId
+                Text = commentText,
+                Author = currentUser,
+                ArticleId = articleId
             });
-            context.SaveChanges();
-            return RedirectToAction("Show", "Articles", new { ArticleId = ArticleId });
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Show", "Articles", new { ArticleId = articleId });
         }
 
         [Authorize]
         [HttpGet]
-        public IActionResult Edit(int ArticleId)
+        public IActionResult Edit(int articleId)
         {
-            Article article = context.Articles.Single(a => a.Id == ArticleId);
+            Article article = _context.Articles.Single(a => a.Id == articleId);
             if (User.FindFirst(ClaimTypes.NameIdentifier).Value == article.UserId
                 || User.IsInRole("admin"))
             {
-                ViewBag.Categories = new SelectList(context.Categories, "Id", "Name");
+                ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name");
                 return View(article);
             }
-            else
-                return NotFound();
+            return NotFound();
         }
 
         [Authorize]
         [HttpPost]
-        public IActionResult Edit(Article ArticleEdited)
+        public IActionResult Edit(Article articleEdited)
         {
-           Article ArticleFromDb = context.Articles.Single(a => a.Id == ArticleEdited.Id);
-            ArticleFromDb.Headline = ArticleEdited.Headline;
-            ArticleFromDb.PictureName = ArticleEdited.PictureName;
-            ArticleFromDb.ShortDescription = ArticleEdited.ShortDescription;
-            ArticleFromDb.Text = ArticleEdited.Text;
-            ArticleFromDb.CategoryId = ArticleEdited.CategoryId;
-            context.SaveChanges();
-            return RedirectToAction("Show", "Articles", new { ArticleId = ArticleEdited.Id });
+           Article articleFromDb = _context.Articles.Single(a => a.Id == articleEdited.Id);
+            articleFromDb.Headline = articleEdited.Headline;
+            articleFromDb.PictureName = articleEdited.PictureName;
+            articleFromDb.ShortDescription = articleEdited.ShortDescription;
+            articleFromDb.Text = articleEdited.Text;
+            articleFromDb.CategoryId = articleEdited.CategoryId;
+            _context.SaveChanges();
+            return RedirectToAction("Show", "Articles", new { ArticleId = articleEdited.Id });
         }
     }
 }

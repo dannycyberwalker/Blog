@@ -1,35 +1,35 @@
 ﻿@model RegisterViewModel
-<h2>Регистрация нового пользователя</h2>
+<h2>Регистрация</h2>
 <form method="post" asp-controller="Account" asp-action="Register" enctype="multipart/form-data">
     <div asp-validation-summary="ModelOnly"></div>
     <div>
         <label asp-for="Email"></label><br />
-        <input asp-for="Email" type="text"/>
+        <input asp-for="Email" type="text" class="form-control"/>
         <span asp-validation-for="Email"></span>
     </div>
     <div>
         <label asp-for="FirstName"></label><br />
-        <input asp-for="FirstName" type="text"/>
+        <input asp-for="FirstName" type="text" class="form-control"/>
         <span asp-validation-for="FirstName"></span>
     </div>
     <div>
         <label asp-for="LastName"></label><br />
-        <input asp-for="LastName" type="text"/>
+        <input asp-for="LastName" type="text" class="form-control"/>
         <span asp-validation-for="LastName"></span>
     </div>
     <div>
         <label asp-for="NickName"></label><br />
-        <input asp-for="NickName" type="text"/>
+        <input asp-for="NickName" type="text" class="form-control"/>
         <span asp-validation-for="NickName"></span>
     </div>
     <div>
         <label asp-for="Avatar"></label><br />
-        <input asp-for="Avatar" type="file"/>
+        <input asp-for="Avatar" type="file" class="form-control"/>
         <span asp-validation-for="Avatar"></span>
     </div>
     <div>
         <label asp-for="Password"></label><br />
-        <input asp-for="Password" type="password" />
+        <input asp-for="Password" type="password" class="form-control"/>
         <span asp-validation-for="Password"></span>
     </div>
     <div>
@@ -38,6 +38,6 @@
         <span asp-validation-for="PasswordConfirm"></span>
     </div><br />
     <div>
-        <input type="submit" value="Регистрация" />
+        <input type="submit" value="Регистрация" class="btn btn-secondary"/>
     </div>
 </form>

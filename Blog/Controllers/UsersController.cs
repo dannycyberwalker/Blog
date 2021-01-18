@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
-using Blog.Services;
+using Blog.Services.Interfaces;
 
 namespace Blog.Controllers
 {
@@ -15,16 +15,16 @@ namespace Blog.Controllers
     [Authorize(Roles ="admin")]
     public class UsersController : Controller
     {
-        private readonly UserManager<User> userManager;
-        private readonly IBytesImageService imageService;
+        private readonly UserManager<User> _userManager;
+        private readonly IImageService _imageService;
 
-        public UsersController(UserManager<User> userManager, IBytesImageService imageService)
+        public UsersController(UserManager<User> userManager, IImageService imageService)
         {
-            this.userManager = userManager;
-            this.imageService = imageService;
+            this._userManager = userManager;
+            this._imageService = imageService;
         }
         [HttpGet]
-        public IActionResult Index() => View(userManager.Users.ToList());
+        public IActionResult Index() => View(_userManager.Users.ToList());
         [HttpGet]
         public IActionResult Create() => View();
 
@@ -33,6 +33,10 @@ namespace Blog.Controllers
         {
             if (ModelState.IsValid)
             {
+                byte[] avatar = null;
+                if (_imageService.IsImage(model.Avatar))
+                    avatar = _imageService.GetBytesFrom(model.Avatar);
+                    
                 User user = new User
                 {
                     Email = model.Email,
@@ -41,9 +45,9 @@ namespace Blog.Controllers
                     LastName = model.LastName,
                     NickName = model.NickName,
                     CreateTime = model.CreateTime,
-                    Avatar =  imageService.GetBytesFrom(model.Avatar)
+                    Avatar =   avatar
                 };
-                var result = await userManager.CreateAsync(user, model.Password);
+                var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
                     return RedirectToAction("Index", "Users");
@@ -57,7 +61,7 @@ namespace Blog.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            User user = await userManager.FindByIdAsync(id);
+            User user = await _userManager.FindByIdAsync(id);
             
             if (user == null)
                 return NotFound();
@@ -79,9 +83,10 @@ namespace Blog.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = await userManager.FindByIdAsync(model.Id);
+                User user = await _userManager.FindByIdAsync(model.Id);
                 if (user != null)
                 {
+                    
                     user.Email = model.Email;
                     user.UserName = model.Email;
                     user.FirstName = model.FirstName;
@@ -89,10 +94,11 @@ namespace Blog.Controllers
                     user.NickName = model.NickName;
                     user.CreateTime = model.CreateTime;
 
-                    if (model.Avatar != null)
-                        user.Avatar = imageService.GetBytesFrom(model.Avatar);
+                    
+                    if (model.Avatar != null && _imageService.IsImage(model.Avatar))
+                        user.Avatar = _imageService.GetBytesFrom(model.Avatar);
 
-                    var result = await userManager.UpdateAsync(user);
+                    var result = await _userManager.UpdateAsync(user);
 
                     if (result.Succeeded)
                         return RedirectToAction("Index", "Users");
@@ -107,15 +113,15 @@ namespace Blog.Controllers
         [HttpPost]
         public async Task<ActionResult> Delete(string id)
         {
-            User user = await userManager.FindByIdAsync(id);
+            User user = await _userManager.FindByIdAsync(id);
             if (user != null)
-                await userManager.DeleteAsync(user);
+                await _userManager.DeleteAsync(user);
             return RedirectToAction("Index", "Users");
         }
         [HttpGet]
         public async Task<IActionResult> ChangePassword(string id)
         {
-            User user = await userManager.FindByIdAsync(id);
+            User user = await _userManager.FindByIdAsync(id);
 
             if (user == null)
                 return NotFound();
@@ -132,7 +138,7 @@ namespace Blog.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = await userManager.FindByIdAsync(model.Id);
+                User user = await _userManager.FindByIdAsync(model.Id);
                 if (user != null)
                 {
                     var passwordValidator =
@@ -141,11 +147,11 @@ namespace Blog.Controllers
                         HttpContext.RequestServices.GetService(typeof(IPasswordHasher<User>)) as IPasswordHasher<User>;
 
                     IdentityResult result =
-                        await passwordValidator.ValidateAsync(userManager, user, model.NewPassword);
+                        await passwordValidator.ValidateAsync(_userManager, user, model.NewPassword);
                     if (result.Succeeded)
                     {
                         user.PasswordHash = passwordHasher.HashPassword(user, model.NewPassword);
-                        await userManager.UpdateAsync(user);
+                        await _userManager.UpdateAsync(user);
                         return RedirectToAction("Index", "Users");
                     }
                     else

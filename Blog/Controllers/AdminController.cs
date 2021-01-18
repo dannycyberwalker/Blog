@@ -2,7 +2,6 @@
 using Blog.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Blog.Services;
@@ -16,12 +15,12 @@ namespace Blog.Controllers
     [Authorize(Roles = "admin")]
     public class AdminController : Controller
     {
-        readonly private ApplicationDbContext context;
-        readonly private ChartViewModelGenerator dataGenerator;
+        private readonly ApplicationDbContext _context;
+        private readonly ChartViewModelGenerator _dataGenerator;
         public AdminController(ApplicationDbContext context, ChartViewModelGenerator dataGenerator)
         {
-            this.context = context;
-            this.dataGenerator = dataGenerator;
+            _context = context;
+            _dataGenerator = dataGenerator;
         }
 
         [HttpGet]
@@ -35,16 +34,14 @@ namespace Blog.Controllers
         {
             Dictionary<string, IQueryable<ICreateTime>> tables = new()
             {
-                {"Comments", context.Comments},
-                {"Articles", context.Articles},
-                {"Users", context.Users}
+                {"Comments", _context.Comments},
+                {"Articles", _context.Articles},
+                {"Users", _context.Users}
             };
             ChartViewModel<string> response;
-            DateTime From;
-            DateTime To;
-            
+
             //Validating request value. 
-            if (!(DateTime.TryParse(from, out From) && DateTime.TryParse(to, out To)))
+            if (!(DateTime.TryParse(from, out var From) && DateTime.TryParse(to, out var To)))
             {
                 From = DateTime.Now.AddDays(-30);
                 To = DateTime.Now;
@@ -67,7 +64,7 @@ namespace Blog.Controllers
                     .Select(d => d.CreateTime)
                     .Where(c => c.AddDays(To.Subtract(From).Days) > To);
                 
-                response = dataGenerator.Generate(dates, From, To, daysInOneStep, tableName);
+                response = _dataGenerator.Generate(dates, From, To, daysInOneStep, tableName);
             }
             else
             {
